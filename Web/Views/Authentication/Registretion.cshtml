@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Registretion";
+    Layout = null;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    @Html.Partial("~/Views/Shared/_title_meta.cshtml")
+    @Html.Partial("~/Views/Shared/_head_css.cshtml")
+</head>
+<body>
+    <div class="account-pages">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="text-center mb-5">
+                        <a href="/" class="auth-logo">
+                            <img src="~/assets/images/logo-dark.png" alt="Logo Dark" height="28" class="auth-logo-dark">
+                            <img src="~/assets/images/logo-light.png" alt="Logo Light" height="28" class="auth-logo-light">
+                        </a>
+                        <p class="font-size-15 text-muted mt-3">Responsive <b>Bootstrap 5</b> Admin Dashboard</p>
+                    </div>
+                    <div class="card overflow-hidden">
+                        <div class="row g-0">
+                            <div class="col-lg-6">
+                                <div class="p-lg-5 p-4">
+
+                                    <div>
+                                        <h5>Register account</h5>
+                                        <p class="text-muted">Get your free Samply account now.</p>
+                                    </div>
+
+                                    <div class="mt-4 pt-3">
+                                        <form action="/">
+
+                                            <div class="mb-3">
+                                                <label class="fw-semibold" for="useremail">Email</label>
+                                                <input type="email" class="form-control" id="useremail" placeholder="Enter email">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="fw-semibold" for="username">Username</label>
+                                                <input type="text" class="form-control" id="username" placeholder="Enter username">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="fw-semibold" for="userpassword">Password</label>
+                                                <input type="password" class="form-control" id="userpassword" placeholder="Enter password">
+                                            </div>
+
+                                            <div class="mt-4 text-end">
+                                                <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Register</button>
+                                            </div>
+
+                                            <div class="mt-4 text-center">
+                                                <p class="mb-0 text-muted">By registering you agree to the Samply <a href="#" class="text-primary fw-semibold text-decoration-underline">Terms of Use</a></p>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="p-lg-5 p-4 bg-auth h-100 d-none d-lg-block">
+                                    <div class="bg-overlay"></div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- end card -->
+                    <div class="mt-5 text-center">
+                        <p>Already have an account ? <a href="@Url.Action("Login","Authentication")" class="fw-semibold text-decoration-underline"> Login </a> </p>
+                        <p>© <script>document.write(new Date().getFullYear())</script> <b>Samply</b>. Crafted with <i class="mdi mdi-heart text-danger"></i> by Pichforest</p>
+                    </div>
+                </div>
+                <!-- end col -->
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- end container -->
+    </div>
+    <!-- end account page -->
+    @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")
+
+   
+
+</body>
+</html>

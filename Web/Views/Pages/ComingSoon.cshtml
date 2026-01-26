@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "Coming Soon";
+    Layout = null;
+}
+
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+<head>
+    @Html.Partial("~/Views/Shared/_title_meta.cshtml")
+    
+    @Html.Partial("~/Views/Shared/_head_css.cshtml")
+</head>
+<body class="auth-body-bg">
+    <div class="account-pages">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-center mb-5">
+                        <a href="/" class="auth-logo">
+                            <img src="~/assets/images/logo-dark.png" alt="Logo Dark" height="28" class="auth-logo-dark">
+                            <img src="~/assets/images/logo-light.png" alt="Logo Light" height="28" class="auth-logo-light">
+                        </a>
+                        <p class="font-size-15 text-muted mt-3">Responsive <strong>Bootstrap 5</strong> Admin Dashboard</p>
+                    </div>
+                    <div class="card overflow-hidden">
+                        <div class="row g-0">
+
+                            <div class="col-lg-6  order-2 order-lg-1">
+                                <div class="p-lg-5 p-4">
+                                    <h5>Let's get started with Samply</h5>
+                                    <p class="font-size-15 text-muted">It will be as simple as in fact it will be occidental.</p>
+
+                                    <div class="mt-5">
+                                        <div data-countdown="2024/04/26" class="counter-number"></div>
+                                    </div>
+
+                                    <div class="input-section mt-5">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="position-relative">
+                                                    <input type="email" class="form-control" placeholder="Enter email address...">
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-primary w-md waves-effect waves-light">Subscribe</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6 order-1 order-lg-2">
+                                <div class="p-lg-5 p-4 bg h-100">
+
+                                    <div class="comingsoon-img">
+                                        <img src="~/assets/images/coming-soon-img.png" alt="Coming Soon Image" class="img-fluid mx-auto d-block">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")
+
+    <!-- Plugins js-->
+    <script src="~/assets/libs/jquery-countdown/jquery.countdown.min.js"></script>
+
+    <!-- Countdown js -->
+    <script src="~/assets/js/pages/coming-soon.init.js"></script>
+
+    <script src="~/assets/js/app.js"></script>
+
+     
+</body>
+</html>

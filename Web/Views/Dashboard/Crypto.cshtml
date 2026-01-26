@@ -1,0 +1,1041 @@
+﻿@{
+    ViewBag.Title = "Crypto";
+    ViewBag.pTitle = "Crypto";
+    ViewBag.pageTitle = "Samply";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <!-- swiper css -->
+    <link rel="stylesheet" href="~/assets/libs/swiper/swiper-bundle.min.css">
+
+    <!-- plugin css -->
+    <link href="~/assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+}
+<div class="row">
+    <div class="col-xl-8">
+        <div class="row">
+            <div class="col-md-6 col-xl-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap align-items-center">
+                            <div class="avatar-sm">
+                                <span class="avatar-title rounded-circle bg-primary-subtle font-size-24">
+                                    <i class="mdi mdi-bitcoin text-primary"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="font-size-15 mb-0 text-truncate">Bitcoin BTC <span class="text-muted">/ BIDR</span></h5>
+                            </div>
+                            <div class="ms-auto">
+                                <div class="dropdown">
+                                    <a class="font-size-16 text-muted dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="mdi mdi-information font-size-16"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3 pt-1">
+                            <div>
+                                <h4 class="font-size-20">$280.526</h4>
+                                <p class="mb-0 text-success fw-semibold font-size-15">+1.5% <i class="bx bx-trending-up align-middle font-size-18"></i></p>
+                            </div>
+                            <div>
+                                <div id="chart-sparkline1" dir="ltr"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap align-items-center">
+                            <div class="avatar-sm">
+                                <span class="avatar-title rounded-circle bg-info-subtle font-size-24">
+                                    <i class="mdi mdi-ethereum text-info"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="font-size-15 mb-0 text-truncate">Ethereum ETH <span class="text-muted">/ BIDR</span></h5>
+                            </div>
+
+                            <div class="ms-auto">
+                                <div class="dropdown">
+                                    <a class="font-size-16 text-muted dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="mdi mdi-information font-size-16"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-3 pt-1">
+                            <div>
+                                <h4 class="font-size-20">$280.526</h4>
+                                <p class="mb-0 text-danger fw-semibold font-size-15">-2.3% <i class="bx bx-trending-down align-middle font-size-18"></i></p>
+                            </div>
+                            <div>
+                                <div id="chart-sparkline2" dir="ltr"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xl-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap align-items-center">
+                            <div class="avatar-sm">
+                                <span class="avatar-title rounded-circle bg-success-subtle font-size-24">
+                                    <i class="mdi mdi-litecoin text-success"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="font-size-15 mb-0 text-truncate">Litecoin LTC <span class="text-muted">/ BIDR</span></h5>
+                            </div>
+
+                            <div class="ms-auto">
+                                <div class="dropdown">
+                                    <a class="font-size-16 text-muted dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="mdi mdi-information font-size-16"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-3 pt-1">
+                            <div>
+                                <h4 class="font-size-20">$486.257</h4>
+                                <p class="mb-0 text-success fw-semibold font-size-15">+3.6% <i class="bx bx-trending-up align-middle font-size-18"></i></p>
+                            </div>
+                            <div>
+                                <div id="chart-sparkline3" dir="ltr"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <div>
+                    <div class="align-items-center d-flex mb-3">
+                        <div class="flex-grow-1">
+                            <h5 class="font-size-15 mb-0 me-2">Available Balance</h5>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <div class="dropdown">
+                                <a class="font-size-16 text-muted dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="mdi mdi-information font-size-16"></i>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="mb-0">$236,214.00</h3>
+                            <div class="pt-4">
+                                <a href="#" class="btn btn-success btn-sm me-2 w-md"><i class="bx bx-upload align-middle me-1 font-size-13"></i> Withdraw</a>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div id="mini-1" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-xl-9">
+        <div class="card">
+            <div class="card-body pb-2">
+                <div class="d-flex flex-wrap align-items-center mb-2">
+                    <h5 class="card-title me-2">Market Overview</h5>
+                    <div class="ms-auto">
+                        <div>
+                            <button type="button" class="btn btn-primary btn-sm">
+                                ALL
+                            </button>
+                            <button type="button" class="btn btn-light btn-sm">
+                                1M
+                            </button>
+                            <button type="button" class="btn btn-light btn-sm">
+                                6M
+                            </button>
+                            <button type="button" class="btn btn-light btn-sm">
+                                1Y
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-lg-9">
+                        <div id="column_range" class="apex-charts" dir="ltr"></div>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <div class="card">
+                            <div class="card-body p-3">
+                                <div class="d-flex">
+                                    <i class="mdi mdi-circle font-size-12 mt-1 text-primary"></i>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="font-size-18">$236,452.63</h5>
+                                        <p class="mt-2 mb-0 text-muted">Total Earning</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body p-3">
+                                <div class="d-flex">
+                                    <i class="mdi mdi-circle font-size-12 mt-1 text-success"></i>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="font-size-18">$184,426.74</h5>
+                                        <p class="mt-2 mb-0 text-muted">Total Profit</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-xl-0">
+                            <div class="card-body p-3">
+                                <div class="d-flex">
+                                    <i class="mdi mdi-circle font-size-12 mt-1 text-danger"></i>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="font-size-18">$352,426.74</h5>
+                                        <p class="mt-2 mb-0 text-muted">Total Loss</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle text-reset" href="#" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="text-muted">Status:</span> <span class="fw-semibold">All<i class="mdi mdi-chevron-down ms-1"></i></span>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton4">
+                            <a class="dropdown-item" href="#">All</a>
+                            <a class="dropdown-item" href="#">Delivered</a>
+                            <a class="dropdown-item" href="#">Shipped</a>
+                            <a class="dropdown-item" href="#">Cancelled</a>
+                        </div>
+                    </div>
+                </div>
+                <h5 class="card-title mb-3 me-2">Current Statistic</h5>
+
+                <div id="donut-chart" class="apex-charts" dir="ltr"></div>
+
+
+                <div class="mt-4 text-center">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                            <div class="d-flex">
+                                <i class="mdi mdi-circle font-size-12 mt-1 text-primary"></i>
+                                <div class="flex-grow-1 ms-2">
+                                    <p class="mb-0">Income (36.4%)</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 font-size-14">$265,745.26</h5>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div class="d-flex">
+                                <i class="mdi mdi-circle font-size-12 mt-1 text-warning"></i>
+                                <div class="flex-grow-1 ms-2">
+                                    <p class="mb-0">Spends (24.2%)</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 font-size-14">$74,965.45</h5>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div class="d-flex">
+                                <i class="mdi mdi-circle font-size-12 mt-1 text-danger"></i>
+                                <div class="flex-grow-1 ms-2">
+                                    <p class="mb-0">Installment (15.2%)</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 font-size-14">$51,652.26</h5>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                            <div class="d-flex">
+                                <i class="mdi mdi-circle font-size-12 mt-1 text-success"></i>
+                                <div class="flex-grow-1 ms-2">
+                                    <p class="mb-0">Invest (24.2%)</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 font-size-14">$13,521.62</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+
+<div class="row">
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="align-items-center d-flex mb-4">
+                    <h4 class="card-title mb-0 flex-grow-1">Quick Transfer</h4>
+                    <div class="flex-shrink-0">
+                        <select class="form-select form-select-sm mb-0 my-n1">
+                            <option value="ltc" selected="">65,568 LTC</option>
+                            <option value="eth">625,487 ETH</option>
+                            <option value="Week">526,478 BTH</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label class="form-label">Currency :</label>
+                                <select class="form-select">
+                                    <option>BTC</option>
+                                    <option>ETH</option>
+                                    <option>LTC</option>
+                                </select>
+                            </div>
+                        </div><!-- end col -->
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label class="form-label">Payment Method :</label>
+                                <select class="form-select">
+                                    <option>Wallet Balance</option>
+                                    <option>Credit / Debit Card</option>
+                                    <option>PayPal</option>
+                                    <option>Payoneer</option>
+                                </select>
+                            </div>
+                        </div><!-- end col -->
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text">Amount</label>
+                        <input type="text" class="form-control" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between pt-2">
+                    <h5 class="card-title">
+                        Recent Contacts
+                    </h5>
+                    <a href="" class="text-primary fw-bold">View more</a>
+                </div>
+
+                <div class="mt-3">
+                    <div class="swiper slider events" id="timeline-carousel">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide event-list">
+                                <div class="text-center">
+                                    <img class="rounded-circle avatar-md" src="~/assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                                    <h5 class="font-size-16 mt-2 mb-1">Kenneth</h5>
+                                    <p class="text-muted font-size-13 mb-0">@@Kenneth</p>
+                                </div>
+                            </div>
+
+                            <div class="swiper-slide event-list">
+                                <div class="text-center">
+                                    <img class="rounded-circle avatar-md" src="~/assets/images/users/avatar-2.jpg" alt="Header Avatar">
+                                    <h5 class="font-size-15 mt-2 mb-1">Frances</h5>
+                                    <p class="text-muted font-size-13 mb-0">@@Frances</p>
+                                </div>
+                            </div>
+
+                            <div class="swiper-slide event-list active">
+                                <div class="text-center">
+                                    <img class="rounded-circle avatar-md" src="~/assets/images/users/avatar-3.jpg" alt="Header Avatar">
+                                    <h5 class="font-size-15 mt-2 mb-1">Kristen</h5>
+                                    <p class="text-muted font-size-13 mb-0">@@Kristen</p>
+                                </div>
+                            </div>
+
+                            <div class="swiper-slide event-list">
+                                <div class="text-center">
+                                    <img class="rounded-circle avatar-md" src="~/assets/images/users/avatar-4.jpg" alt="Header Avatar">
+                                    <h5 class="font-size-15 mt-2 mb-1">Margaret</h5>
+                                    <p class="text-muted font-size-13 mb-0">@@Margaret</p>
+                                </div>
+                            </div>
+
+                            <div class="swiper-slide event-list">
+                                <div class="text-center">
+                                    <img class="rounded-circle avatar-md" src="~/assets/images/users/avatar-5.jpg" alt="Header Avatar">
+                                    <h5 class="font-size-15 mt-2 mb-1">Christine</h5>
+                                    <p class="text-muted font-size-13 mb-0">@@Christine</p>
+                                </div>
+                            </div>
+
+                            <div class="swiper-slide event-list">
+                                <div class="text-center">
+                                    <img class="rounded-circle avatar-md" src="~/assets/images/users/avatar-6.jpg" alt="Header Avatar">
+                                    <h5 class="font-size-15 mt-2 mb-0">Bridgett</h5>
+                                    <p class="text-muted font-size-13 mb-0">@@Bridgett </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3 align-items-center">
+                    <div class="col-sm-7">
+                        <div class="mt-3">
+                            <p class="text-muted mb-0">
+                                <span class="text-primary me-1">*</span>Manage your money
+                                and contact your money to your friends & brands.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="mt-3">
+                            <a href="" class="btn btn-primary w-100">Transfer Now</a>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                        <h5 class="card-title mb-2">Recent Fills</h5>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle text-reset" href="#" data-bs-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                                <span class="text-muted">Monthly<i class="mdi mdi-chevron-down ms-1"></i></span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#">Yearly</a>
+                                <a class="dropdown-item" href="#">Monthly</a>
+                                <a class="dropdown-item" href="#">Weekly</a>
+                                <a class="dropdown-item" href="#">Today</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end head -->
+
+
+                <div class=" mx-n3" data-simplebar style="max-height: 401px;">
+
+                    <div class="d-flex align-items-center py-3 border-bottom">
+
+                        <div class="flex-shrink-0">
+                            <ul class="list-inline recent-fills mb-0 mt-2">
+                                <li class="list-inline-item me-0">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-primary-subtle">
+                                            <i class="mdi mdi-ethereum font-size-20 text-primary"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-warning-subtle">
+                                            <i class="mdi mdi-bitcoin font-size-20 text-warning"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="flex-grow-1 ms-2 overflow-hidden">
+                            <h5 class="mb-1 font-size-15 text-truncate">0.685 WETH <i class="mdi mdi-swap-horizontal mx-2 font-size-18"></i> 250 USDT</h5>
+                            <p class="text-muted mb-0">6 minutes ago</p>
+                        </div>
+
+                        <div class="flex-shrink-0 text-end ms-4">
+                            <h5 class="mb-1 font-size-15">$14,965.15</h5>
+                            <p class="text-muted mb-0">Value</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center py-3 border-bottom">
+                        <div class="flex-shrink-0">
+                            <ul class="list-inline recent-fills mb-0 mt-2">
+                                <li class="list-inline-item me-0">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-success-subtle">
+                                            <i class="mdi mdi-judaism font-size-20 text-success"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-info-subtle">
+                                            <i class="mdi mdi-litecoin font-size-20 text-info"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="flex-grow-1 ms-2 overflow-hidden">
+                            <h5 class="mb-1 font-size-15 text-truncate">526.54 DAI  <i class="mdi mdi-swap-horizontal mx-2 font-size-18"></i> 250 LTC </h5>
+                            <p class="text-muted mb-0">30 minutes ago</p>
+                        </div>
+
+                        <div class="flex-shrink-0 text-end ms-4">
+                            <h5 class="mb-1 font-size-15">$68,452.40</h5>
+                            <p class="text-muted mb-0">Value</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center py-3 border-bottom">
+
+                        <div class="flex-shrink-0">
+                            <ul class="list-inline recent-fills mb-0 mt-2">
+                                <li class="list-inline-item me-0">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-danger-subtle">
+                                            <i class="mdi mdi-shape-polygon-plus font-size-20 text-danger"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-warning-subtle">
+                                            <i class="mdi mdi-bitcoin font-size-20 text-warning"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="flex-grow-1 ms-2 overflow-hidden">
+                            <h5 class="mb-1 font-size-15 text-truncate">0.852 MATIC <i class="mdi mdi-swap-horizontal mx-2 font-size-18"></i> 6541 USDT</h5>
+                            <p class="text-muted mb-0">45 minutes ago</p>
+                        </div>
+
+                        <div class="flex-shrink-0 text-end ms-4">
+                            <h5 class="mb-1 font-size-15">$65,621.40</h5>
+                            <p class="text-muted mb-0">Value</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center py-3 border-bottom">
+                        <div class="flex-shrink-0">
+                            <ul class="list-inline recent-fills mb-0 mt-2">
+                                <li class="list-inline-item me-0">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-success-subtle">
+                                            <i class="mdi mdi-ethereum font-size-20 text-success"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-primary-subtle">
+                                            <i class="mdi mdi-bitcoin font-size-20 text-primary"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="flex-grow-1 ms-2 overflow-hidden">
+                            <h5 class="mb-1 font-size-15 text-truncate">0.545 WETH <i class="mdi mdi-swap-horizontal mx-2 font-size-18"></i> 562 USDT</h5>
+                            <p class="text-muted mb-0">46 minutes ago</p>
+                        </div>
+
+                        <div class="flex-shrink-0 text-end ms-4">
+                            <h5 class="mb-1 font-size-15">$86,512.60</h5>
+                            <p class="text-muted mb-0">Value</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center py-3 border-bottom">
+
+                        <div class="flex-shrink-0">
+                            <ul class="list-inline recent-fills mb-0 mt-2">
+                                <li class="list-inline-item me-0">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-primary-subtle">
+                                            <i class="mdi mdi-litecoin font-size-20 text-primary"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-danger-subtle">
+                                            <i class="mdi mdi-shape-polygon-plus font-size-20 text-danger"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="flex-grow-1 ms-2 overflow-hidden">
+                            <h5 class="mb-1 font-size-15 text-truncate">0.685 MATIC <i class="mdi mdi-swap-horizontal mx-2 font-size-18"></i> 250 LTC</h5>
+                            <p class="text-muted mb-0">52 minutes ago</p>
+                        </div>
+
+                        <div class="flex-shrink-0 text-end ms-4">
+                            <h5 class="mb-1 font-size-15">$56,845.70</h5>
+                            <p class="text-muted mb-0">Value</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center py-3 border-bottom">
+
+                        <div class="flex-shrink-0">
+                            <ul class="list-inline recent-fills mb-0 mt-2">
+                                <li class="list-inline-item me-0">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-primary-subtle">
+                                            <i class="mdi mdi-ethereum font-size-20 text-primary"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-warning-subtle">
+                                            <i class="mdi mdi-bitcoin font-size-20 text-warning"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="flex-grow-1 ms-2 overflow-hidden">
+                            <h5 class="mb-1 font-size-15 text-truncate">0.685 WETH <i class="mdi mdi-swap-horizontal mx-2 font-size-18"></i> 250 DAI</h5>
+                            <p class="text-muted mb-0">60 minutes ago</p>
+                        </div>
+
+                        <div class="flex-shrink-0 text-end ms-4">
+                            <h5 class="mb-1 font-size-15">$45,854.17</h5>
+                            <p class="text-muted mb-0">Value</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body pb-0">
+                <div class="card-info d-flex align-items-start">
+                    <div class="flex-grow-1">
+                        <h5 class="card-title mb-2">Payment Method</h5>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle text-reset" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="text-muted">Monthly<i class="mdi mdi-chevron-down ms-1"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#">Yearly</a>
+                                <a class="dropdown-item" href="#">Monthly</a>
+                                <a class="dropdown-item" href="#">Weekly</a>
+                                <a class="dropdown-item" href="#">Today</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card text-bg-primary visa-card mb-0 mt-3">
+                    <div class="card-body">
+                        <div>
+                            <i class="bx bxl-visa visa-pattern"></i>
+
+                            <div class="float-end">
+                                <i class="bx bxl-visa visa-logo display-3"></i>
+                            </div>
+
+                            <div>
+                                <i class="bx bx-chip h1 text-warning"></i>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5 mb-2 align-items-center">
+                            <div class="col-3">
+                                <p class="mb-0 text-truncate text-center">
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                </p>
+                            </div>
+                            <div class="col-3">
+                                <p class="mb-0 text-truncate text-center">
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                </p>
+                            </div>
+                            <div class="col-3">
+                                <p class="mb-0 text-truncate text-center">
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                    <i class="fas fa-star-of-life m-1"></i>
+                                </p>
+                            </div>
+                            <div class="col-3">
+                                <p class="mb-0 text-truncate text-center font-size-20">
+                                    4565
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-5">
+                            <h5 class="text-white float-end mb-0">12/22</h5>
+                            <h5 class="text-white mb-0">Peter</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-info">
+                    <div class="align-items-center d-flex mt-4">
+                        <h4 class="card-title mb-0 flex-grow-1">Card Limits</h4>
+                        <div class="flex-shrink-0">
+                            <select class="form-select form-select-sm mb-0 my-n1">
+                                <option value="ltc" selected="">Switch Card</option>
+                                <option value="visa">Visa</option>
+                                <option value="paypal">Paypal</option>
+                                <option value="mastercard">Mastercard</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="monthly-limits">
+                            <div id="card-limit"></div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="font-size-15">Monthly Limits</h5>
+                            <p class="text-muted mb-0">$20,000 of $100,000</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <a href="" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                        <h5 class="card-title mb-4">Cryptocurrency Prices by Market Cap</h5>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle text-reset" href="#" data-bs-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                                <span class="fw-semibold">Report By:</span> <span class="text-muted">
+                                    Monthly<i class="mdi mdi-chevron-down ms-1"></i>
+                                </span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#">Yearly</a>
+                                <a class="dropdown-item" href="#">Monthly</a>
+                                <a class="dropdown-item" href="#">Weekly</a>
+                                <a class="dropdown-item" href="#">Today</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle table-striped table-nowrap mb-0">
+                        <thead>
+                            <tr>
+                                <th class="align-middle">#</th>
+                                <th class="align-middle" style="width: 160px;">Coin</th>
+                                <th class="align-middle" style="width: 100px;">Symbol</th>
+                                <th class="align-middle">Price</th>
+                                <th class="align-middle" style="width: 100px;">1h</th>
+                                <th class="align-middle" style="width: 100px;">24h</th>
+                                <th class="align-middle">Mkt Cap</th>
+                                <th class="align-middle">Last 7 Days</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><i class="mdi mdi-star-outline font-size-18 me-2 align-middle"></i></td>
+                                <td class="fw-semibold"><i class="mdi mdi-bitcoin font-size-24 text-warning align-middle me-2"></i>Bitcoin</td>
+                                <td>
+                                  <span>  BTC</span>
+                                </td>
+                                <td>
+                                    $52,635.254526
+                                </td>
+                                <td>
+                                    <span> class="text-danger"> -0.4%</span>
+                                </td>
+                                <td>
+                                    <span> class="text-danger"> -0.7%</span>
+                                </td>
+                                <td>
+                                    $82,632.4527
+                                </td>
+                                <td>
+                                    <div id="chart-1"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><i class="mdi mdi-star-outline font-size-18 me-2 align-middle"></i></td>
+                                <td class="fw-semibold"><i class="mdi mdi-ethereum font-size-24 text-muted align-middle me-2"></i>Ethereum</td>
+                                <td>
+                                    <span> ETH </span>
+                                </td>
+                                <td>
+                                    $41,718.094526
+                                </td>
+                                <td>
+                                    <span class="text-danger"> -0.4%</span>
+                                </td>
+                                <td>
+                                    <span class="text-success"> 6.6%</span>
+                                </td>
+                                <td>
+                                    $56,017.3118
+                                </td>
+                                <td>
+                                    <div id="chart-2"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><i class="mdi mdi-star-outline font-size-18 me-2 align-middle"></i></td>
+                                <td class="fw-semibold"><i class="mdi mdi-litecoin font-size-24 text-primary align-middle me-2"></i>Litecoin</td>
+                                <td>
+                                    LTC
+                                </td>
+                                <td>
+                                    $52,635.255842
+                                </td>
+                                <td>
+                                    <span class="text-success"> -0.1%</span>
+                                </td>
+                                <td>
+                                    <span class="text-success"> -0.5%</span>
+                                </td>
+                                <td>
+                                    $45,634.5651
+                                </td>
+                                <td>
+                                    <div id="chart-3"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><i class="mdi mdi-star-outline font-size-18 me-2 align-middle"></i></td>
+                                <td class="fw-semibold"><i class="mdi mdi-shape-polygon-plus font-size-24 text-warning align-middle me-2"></i>Polygon</td>
+                                <td>
+                                    <span> MATIC </span>
+                                </td>
+                                <td>
+                                    $15,905.658954
+                                </td>
+                                <td>
+                                    <span class="text-success"> 0.4%</span>
+                                </td>
+                                <td>
+                                    <span class="text-danger"> -0.7%</span>
+                                </td>
+                                <td>
+                                    $12,954.3323
+                                </td>
+                                <td>
+                                    <div id="chart-4"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><i class="mdi mdi-star-outline font-size-18 me-2 align-middle"></i></td>
+                                <td class="fw-semibold"><i class="mdi mdi-judaism font-size-24 text-primary align-middle me-2"></i>Dai</td>
+                                <td>
+                                    Dai
+                                </td>
+                                <td>
+                                    $32,997.608548
+                                </td>
+                                <td>
+                                    <span class="text-danger"> -0.4%</span>
+                                </td>
+                                <td>
+                                    <span class="text-Success"> 0.0%</span>
+                                </td>
+                                <td>
+                                    $58,848.0381
+                                </td>
+                                <td>
+                                    <div id="chart-5"></div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><i class="mdi mdi-star-outline font-size-18 me-2 align-middle"></i></td>
+                                <td class="fw-semibold"><i class="mdi mdi-chart-line-stacked font-size-24 text-success align-middle me-2"></i>The Graph</td>
+                                <td>
+                                    <span>  GRT</span>
+                                </td>
+                                <td>
+                                    $45,957.746452
+                                </td>
+                                <td>
+                                    <span class="text-success"> 3.9%	</span>
+                                </td>
+                                <td>
+                                    <span class="text-success"> 4.5%</span>
+                                </td>
+                                <td>
+                                    $74,664.9046
+                                </td>
+                                <td>
+                                    <div id="chart-6"></div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <!-- end table -->
+                </div>
+                <!-- end table responsive -->
+
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <!-- card -->
+        <div class="card">
+            <!-- card body -->
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center mb-4">
+                    <h5 class="card-title me-2">Sales by Locations</h5>
+                    <div class="ms-auto">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle text-reset" href="#" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="text-muted font-size-12">Sort By:</span> <span class="fw-medium">World<i class="mdi mdi-chevron-down ms-1"></i></span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                                <a class="dropdown-item" href="#">USA</a>
+                                <a class="dropdown-item" href="#">Russia</a>
+                                <a class="dropdown-item" href="#">Australia</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sales-by-locations" style="height: 244px"></div>
+
+                <div class="px-2 py-2 mt-2">
+                    <p class="mb-1">USA <span class="float-end">75%</span></p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar progress-bar-striped bg-primary" role="progressbar"
+                             style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="75">
+                        </div>
+                    </div>
+
+                    <p class="mt-3 mb-1">Russia <span class="float-end">55%</span></p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                             style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="55">
+                        </div>
+                    </div>
+
+                    <p class="mt-3 mb-1">Australia <span class="float-end">85%</span></p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar"
+                             style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="85">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+</div>
+<!-- end row -->
+@section scripts{
+    <!-- apexcharts -->
+    <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
+
+    <!-- swiper js -->
+    <script src="~/assets/libs/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Plugins js-->
+    <script src="~/assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="~/assets/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js"></script>
+
+    <script src="~/assets/js/pages/dashboard-crm.init.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+}

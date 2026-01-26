@@ -1,0 +1,144 @@
+﻿<div class="topnav">
+    <div class="container-fluid">
+        <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
+
+            <div class="collapse navbar-collapse" id="topnav-menu-content">
+                <ul class="navbar-nav">
+
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-dahboard" role="button">
+                            <i class="bx bxs-dashboard me-2"></i><span key="t-dashboards">Dashboard</span> <div class="arrow-down"></div>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="topnav-dahboard">
+                            <a href="/" class="dropdown-item" key="t-dashboards">Dashboard</a>
+                            <a href="@Url.Action("Crypto","DashBoard")" class="dropdown-item" key="t-crypto">Crypto</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index","UiElements")">
+                            <i class="bx bx-briefcase me-2"></i><span key="t-ui-elements">UI Elements</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-advancedkit" role="button">
+                            <i class="bx bxs-grid me-2"></i><span key="t-advancedkit">Advanced Kit</span> <div class="arrow-down"></div>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="topnav-advancedkit">
+                            <a href="@Url.Action("SweetAlerts","AdvancKit")" class="dropdown-item" key="t-sweet-alert">Sweet-Alert</a>
+                            <a href="@Url.Action("SwiperSlider","AdvancKit")" class="dropdown-item" key="t-range-slider">Range Slider</a>
+                            <a href="@Url.Action("Notifications","AdvancKit")" class="dropdown-item" key="t-notifications">Notifications</a>
+                            <a href="@Url.Action("Carousel","AdvancKit")" class="dropdown-item" key="t-carousel">Carousel</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
+                            <i class="bx bxs-cube-alt me-2"></i><span key="t-apps">Apps</span> <div class="arrow-down"></div>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="topnav-apps">
+
+                            <a href="@Url.Action("Calendar","Apps")" class="dropdown-item" key="t-calendar">Calendar</a>
+                            <a href="@Url.Action("Chat","Apps")" class="dropdown-item" key="t-chat">Chat</a>
+                            <div class="dropdown">
+                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-email"
+                                   role="button">
+                                    <span key="t-email">Email</span> <div class="arrow-down"></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="topnav-email">
+                                    <a href="@Url.Action("Email-inbox","Apps")" class="dropdown-item" key="t-inbox">Inbox</a>
+                                    <a href="@Url.Action("EmailRead","Apps")" class="dropdown-item" key="t-read-email">Read Email</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-adminkit" role="button">
+                            <i class="bx bx-layer me-2"></i><span key="t-adminkit">Admin Kit</span> <div class="arrow-down"></div>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="topnav-adminkit">
+                            <a href="@Url.Action("Index","Typography")" class="dropdown-item" key="t-typography">Typography</a>
+                            <div class="dropdown">
+                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-form"
+                                   role="button">
+                                    <span key="t-forms">Forms</span> <div class="arrow-down"></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="topnav-form">
+                                    <a href="@Url.Action("BasicElements","Forms")" class="dropdown-item" key="t-form-elements">Form Elements</a>
+                                    <a href="@Url.Action("Advanced","Forms")" class="dropdown-item" key="t-form-advanced">Form Advanced</a>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-table"
+                                   role="button">
+                                    <span key="t-tables">Tables</span> <div class="arrow-down"></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="topnav-table">
+                                    <a href="@Url.Action("BoostrepTables","Tables")" class="dropdown-item" key="t-bootstrap-tables">Bootstrap Tables</a>
+                                    <a href="@Url.Action("Datatables","Tables")" class="dropdown-item" key="t-data-tables">Data Tables</a>
+                                </div>
+                            </div>
+                            <a href="@Url.Action("Index","Charts")" class="dropdown-item" key="t-charts">Charts</a>
+                            <div class="dropdown">
+                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-icons"
+                                   role="button">
+                                    <span key="t-icons">Icons</span> <div class="arrow-down"></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="topnav-icons">
+                                    <a href="@Url.Action("Boxicons","Icons")" class="dropdown-item" key="t-boxicons">Boxicons</a>
+                                    <a href="@Url.Action("MaterialDesign","Icons")" class="dropdown-item" key="t-material-design">Material Design</a>
+                                    <a href="@Url.Action("Dripicons","Icons")" class="dropdown-item" key="t-dripicons">Dripicons</a>
+                                    <a href="@Url.Action("FontAwesome","Icons")" class="dropdown-item" key="t-font-awesome">Font Awesome 5</a>
+                                </div>
+                            </div>
+                            <a href="@Url.Action("Index","Maps")" class="dropdown-item" key="t-maps">Maps</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-more" role="button">
+                            <i class="bx bx-file me-2"></i><span key="t-extra-pages">Extra pages</span> <div class="arrow-down"></div>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="topnav-more">
+
+                            <div class="dropdown">
+                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-auth"
+                                   role="button">
+                                    <span key="t-authentication">Authentication</span> <div class="arrow-down"></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="topnav-auth">
+                                    <a href="@Url.Action("Login","Authentication")" class="dropdown-item" key="t-login">Login</a>
+                                    <a href="@Url.Action("Registretion","Authentication")" class="dropdown-item" key="t-register">Register</a>
+                                    <a href="@Url.Action("Recoverpassword","Authentication")" class="dropdown-item" key="t-recover-password">Recover Password</a>
+                                    <a href="@Url.Action("lockscreen","Authentication")" class="dropdown-item" key="t-lock-screen">Lock Screen</a>
+                                    <a href="@Url.Action("ConfirmMail","Authentication")" class="dropdown-item" key="t-confirm-mail">Confirm Mail</a>
+                                    <a href="@Url.Action("Emailverification","Authentication")" class="dropdown-item" key="t-email-verification">Email Verification</a>
+                                    <a href="@Url.Action("Twostepvarification","Authentication")" class="dropdown-item" key="t-two-step-verification">Two step verification</a>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-utility"
+                                   role="button">
+                                    <span key="t-utility">Utility</span> <div class="arrow-down"></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="topnav-utility">
+                                    <a href="@Url.Action("Starter","Pages")" class="dropdown-item" key="t-starter-page">Starter Page</a>
+                                    <a href="@Url.Action("preloader","Pages")" class="dropdown-item" key="t-preloader">Preloader</a>
+                                    <a href="@Url.Action("ProfileSimple","Pages")" class="dropdown-item" key="t-profile">Profile</a>
+                                    <a href="@Url.Action("Team","Pages")" class="dropdown-item" key="t-invoice">Invoice</a>
+                                    <a href="@Url.Action("Gallery","Pages")" class="dropdown-item" key="t-maintenance">Maintenance</a>
+                                    <a href="@Url.Action("Invoice","Pages")" class="dropdown-item" key="t-coming-soon">Coming Soon</a>
+                                    <a href="@Url.Action("Maintenance","Pages")" class="dropdown-item" key="t-timeline">Timeline</a>
+                                    <a href="@Url.Action("Pricing","Pages")" class="dropdown-item" key="t-pricing">Pricing</a>
+                                    <a href="@Url.Action("Errors404","Pages")" class="dropdown-item" key="t-error-404">Error 404</a>
+                                    <a href="@Url.Action("Errors500","Pages")" class="dropdown-item" key="t-error-500">Error 500</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
