@@ -3,18 +3,30 @@ using Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// MVC
 builder.Services.AddControllersWithViews();
 
+// DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
 
+// 🔐 LOGIN (ESTO FALTABA)
+builder.Services.AddScoped<LoginRepository>();
+
+// 🧠 SESSION (LA USAMOS EN LOGIN)
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -26,10 +38,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// 🔐 SESSION ANTES DE AUTH
+app.UseSession();
+
 app.UseAuthorization();
 
+// 👉 Ruta inicial al LOGIN
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+    pattern: "{controller=Authentication}/{action=Login}/{id?}");
 
 app.Run();

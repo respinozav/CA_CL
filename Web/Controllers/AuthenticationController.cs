@@ -1,55 +1,48 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Web.Data;
+using Web.Models;
 
 namespace Web.Controllers
 {
     public class AuthenticationController : Controller
     {
+        private readonly LoginRepository _loginRepo;
 
-        [ActionName("Login")]
+        public AuthenticationController(LoginRepository loginRepo)
+        {
+            _loginRepo = loginRepo;
+        }
+
+        [HttpGet]
         public IActionResult Login()
         {
-            return View();
+            return View(new LoginViewModel());
         }
 
-        [ActionName("lockscreen")]
-        public IActionResult lockscreen()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(LoginViewModel model)
         {
-            return View();
-        }
+            if (!ModelState.IsValid)
+                return View(model);
 
-        [ActionName("Recoverpassword")]
-        public IActionResult Recoverpassword()
-        {
-            return View();
-        }
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var result = _loginRepo.Login(model.Usuario, model.Clave, ip);
 
-        [ActionName("Registretion")]
-        public IActionResult Registretion()
-        {
-            return View();
-        }
+            // ❌ Login fallido
+            if (result == null || result.Codigo != "LOGIN_OK")
+            {
+                model.MensajeError = result?.Descripcion ?? "No fue posible iniciar sesión";
+                return View(model);
+            }
 
-        [ActionName("ConfirmMail")]
-        public IActionResult ConfirmMail()
-        {
-            return View();
-        }
-        [ActionName("Emailverification")]
-        public IActionResult Emailverification()
-        {
-            return View();
-        }
-        [ActionName("Twostepvarification")]
-        public IActionResult Twostepvarification()
-        {
-            return View();
-        }
+            // ✅ Login exitoso → recién aquí se usa Session
+            HttpContext.Session.SetString("UsuarioId", result.UsuarioId!.Value.ToString());
+            HttpContext.Session.SetString("RolId", result.RolId!.Value.ToString());
+            HttpContext.Session.SetString("Nombre", result.Nombre!);
 
-        
-
+            return RedirectToAction("Index", "Dashboard");
+        }
     }
 }
+
