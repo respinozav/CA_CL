@@ -15,6 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // 🔐 LOGIN (ESTO FALTABA)
 builder.Services.AddScoped<LoginRepository>();
+builder.Services.AddScoped<MenuRepository>();
 
 // 🧠 SESSION (LA USAMOS EN LOGIN)
 builder.Services.AddSession(options =>

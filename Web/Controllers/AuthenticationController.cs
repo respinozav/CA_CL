@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using Web.Data;
 using Web.Models;
 
@@ -7,10 +8,13 @@ namespace Web.Controllers
     public class AuthenticationController : Controller
     {
         private readonly LoginRepository _loginRepo;
-
-        public AuthenticationController(LoginRepository loginRepo)
+        private readonly MenuRepository _menuRepo;
+        public AuthenticationController(
+            LoginRepository loginRepo, 
+            MenuRepository menuRepo)
         {
             _loginRepo = loginRepo;
+            _menuRepo = menuRepo;
         }
 
         [HttpGet]
@@ -40,6 +44,12 @@ namespace Web.Controllers
             HttpContext.Session.SetString("UsuarioId", result.UsuarioId!.Value.ToString());
             HttpContext.Session.SetString("RolId", result.RolId!.Value.ToString());
             HttpContext.Session.SetString("Nombre", result.Nombre!);
+
+            var menu = _menuRepo.ObtenerMenuPorRol(result.RolId.Value);
+            HttpContext.Session.SetString(
+              "Menu",
+               JsonSerializer.Serialize(menu)
+            );
 
             return RedirectToAction("Index", "Dashboard");
         }
