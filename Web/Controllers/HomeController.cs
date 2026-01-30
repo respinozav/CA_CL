@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Web.Models;
 using System.Diagnostics;
+using Web.Filters;
 
 namespace Web.Controllers
 {
@@ -12,7 +13,7 @@ namespace Web.Controllers
         {
             _logger = logger;
         }
-
+        [MenuAuthorize]
         public IActionResult Index()
         {
             return View();
