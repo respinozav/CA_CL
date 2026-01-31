@@ -53,6 +53,11 @@ namespace Web.Controllers
 
             return RedirectToAction("Index", "Dashboard");
         }
+        [HttpGet]
+        public IActionResult Registretion()
+        {
+            return View();
+        }
     }
 }
 
