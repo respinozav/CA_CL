@@ -13,13 +13,13 @@ namespace Web.Data
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
-        public LoginResultDto Login(string usuario, string clave, string ip)
+        public LoginResultDto LoginPorEmail(string email, string clave, string ip)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("app.sp_LoginUsuario", conn);
 
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Usuario", usuario);
+            cmd.Parameters.AddWithValue("@Email", email);
             cmd.Parameters.AddWithValue("@Clave", clave);
             cmd.Parameters.AddWithValue("@IpOrigen", ip ?? string.Empty);
 
@@ -31,8 +31,8 @@ namespace Web.Data
 
             return new LoginResultDto
             {
-                Codigo = reader["Codigo"].ToString(),
-                Descripcion = reader["Descripcion"].ToString(),
+                Codigo = reader["Codigo"]?.ToString()!,
+                Descripcion = reader["Descripcion"]?.ToString()!,
 
                 UsuarioId = reader["UsuarioId"] == DBNull.Value
                     ? null
@@ -44,7 +44,15 @@ namespace Web.Data
 
                 Nombre = reader["Nombre"] == DBNull.Value
                     ? null
-                    : reader["Nombre"].ToString()
+                    : reader["Nombre"].ToString(),
+
+                Email = reader["Email"] == DBNull.Value
+                    ? null
+                    : reader["Email"].ToString(),
+
+                RolNombre = reader["RolNombre"] == DBNull.Value
+                    ? null
+                    : reader["RolNombre"].ToString()
             };
         }
     }

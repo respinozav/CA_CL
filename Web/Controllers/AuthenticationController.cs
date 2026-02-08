@@ -9,8 +9,9 @@ namespace Web.Controllers
     {
         private readonly LoginRepository _loginRepo;
         private readonly MenuRepository _menuRepo;
+
         public AuthenticationController(
-            LoginRepository loginRepo, 
+            LoginRepository loginRepo,
             MenuRepository menuRepo)
         {
             _loginRepo = loginRepo;
@@ -31,7 +32,9 @@ namespace Web.Controllers
                 return View(model);
 
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-            var result = _loginRepo.Login(model.Usuario, model.Clave, ip);
+
+            // 🔐 LOGIN POR EMAIL
+            var result = _loginRepo.LoginPorEmail(model.Email, model.Clave, ip);
 
             // ❌ Login fallido
             if (result == null || result.Codigo != "LOGIN_OK")
@@ -40,24 +43,25 @@ namespace Web.Controllers
                 return View(model);
             }
 
-            // ✅ Login exitoso → recién aquí se usa Session
+            // ✅ Login exitoso → Session
             HttpContext.Session.SetString("UsuarioId", result.UsuarioId!.Value.ToString());
             HttpContext.Session.SetString("RolId", result.RolId!.Value.ToString());
             HttpContext.Session.SetString("Nombre", result.Nombre!);
+            HttpContext.Session.SetString("Email", result.Email!);
 
             var menu = _menuRepo.ObtenerMenuPorRol(result.RolId.Value);
             HttpContext.Session.SetString(
-              "Menu",
-               JsonSerializer.Serialize(menu)
+                "Menu",
+                JsonSerializer.Serialize(menu)
             );
 
             return RedirectToAction("Index", "Dashboard");
         }
-        [HttpGet]
+
+  
         public IActionResult Registretion()
         {
             return View();
         }
     }
 }
-
