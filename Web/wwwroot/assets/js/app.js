@@ -50,6 +50,7 @@ File: Main Js File
     function initMetisMenu() {
         //metis menu
         $("#side-menu").metisMenu();
+
     }
 
     function initCounterNumber() {
@@ -351,7 +352,7 @@ File: Main Js File
         initMetisMenu();
         initCounterNumber();
         initLeftMenuCollapse();
-        initActiveMenu();
+       // initActiveMenu();
         initMenuItemScroll();
         initHoriMenuActive();
         initFullScreen();

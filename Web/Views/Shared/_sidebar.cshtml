@@ -2,56 +2,57 @@
 @using Web.Models
 
 @{
+    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
     var menuJson = Context.Session.GetString("Menu");
     var menu = string.IsNullOrEmpty(menuJson)
         ? new List<MenuDto>()
         : JsonSerializer.Deserialize<List<MenuDto>>(menuJson);
 }
 
-<!-- ========== Left Sidebar Start ========== -->
 <div class="vertical-menu">
     <div data-simplebar class="h-100">
-
-        <!--- Sidemenu -->
         <div id="sidebar-menu">
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title">Menu</li>
 
                 @foreach (var item in menu.OrderBy(m => m.Orden))
                 {
-                    if (item.Hijos != null && item.Hijos.Any())
-                    {
-                                        <li>
-                                            <a href="javascript:void(0);" class="has-arrow waves-effect">
-                                                <i class="bx bx-@item.Icono"></i>
-                                                <span>@item.Nombre</span>
-                                            </a>
+                    var tieneHijos = item.Hijos?.Any() == true;
+                    var hijoActivo = tieneHijos && item.Hijos.Any(h =>
+                    currentPath.StartsWith(h.Ruta.ToLower())
+                    );
 
-                                            <ul class="sub-menu" aria-expanded="false">
+                    <li class="@(hijoActivo ? "mm-active" : "")">
+                        @if (tieneHijos)
+                        {
+                            <a href="#" class="has-arrow waves-effect @(hijoActivo ? "mm-active" : "")">
+                                <i class="bx @item.Icono"></i>
+                                <span>@item.Nombre</span>
+                            </a>
+
+                            <ul class="sub-menu @(hijoActivo ? "mm-show" : "")">
                                 @foreach (var hijo in item.Hijos.OrderBy(h => h.Orden))
                                 {
-                                                            <li>
-                                                                <a href="@hijo.Ruta">
-                                                                    <span>@hijo.Nombre</span>
-                                                                </a>
-                                                            </li>
+                                    var activo = currentPath.StartsWith(hijo.Ruta.ToLower());
+
+                                    <li class="@(activo ? "mm-active" : "")">
+                                        <a href="@hijo.Ruta">
+                                            <span>@hijo.Nombre</span>
+                                        </a>
+                                    </li>
                                 }
-                                            </ul>
-                                        </li>
-                    }
-                    else
-                    {
-                                        <li>
-                                            <a href="@item.Ruta" class="waves-effect">
-                                                <i class="bx bx-@item.Icono"></i>
-                                                <span>@item.Nombre</span>
-                                            </a>
-                                        </li>
-                    }
+                            </ul>
+                        }
+                        else
+                        {
+                            <a href="@item.Ruta" class="waves-effect">
+                                <i class="bx @item.Icono"></i>
+                                <span>@item.Nombre</span>
+                            </a>
+                        }
+                    </li>
                 }
             </ul>
         </div>
-        <!-- Sidebar -->
     </div>
 </div>
-<!-- Left Sidebar End -->

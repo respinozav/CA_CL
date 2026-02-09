@@ -9,13 +9,16 @@ namespace Web.Controllers
     {
         private readonly LoginRepository _loginRepo;
         private readonly MenuRepository _menuRepo;
+        private readonly RegisterRepository _registerRepo;
 
         public AuthenticationController(
             LoginRepository loginRepo,
-            MenuRepository menuRepo)
+            MenuRepository menuRepo,
+            RegisterRepository registerRepo)
         {
             _loginRepo = loginRepo;
             _menuRepo = menuRepo;
+            _registerRepo = registerRepo;
         }
 
         [HttpGet]
@@ -49,19 +52,82 @@ namespace Web.Controllers
             HttpContext.Session.SetString("Nombre", result.Nombre!);
             HttpContext.Session.SetString("Email", result.Email!);
 
-            var menu = _menuRepo.ObtenerMenuPorRol(result.RolId.Value);
+            var menuPlanoItem = _menuRepo.ObtenerMenuPorRol(result.RolId.Value);
+
+            // mapear MenuItem → MenuDto
+            var menuPlano = menuPlanoItem.Select(m => new MenuDto
+            {
+                MenuId = m.MenuId,
+                MenuPadreId = m.MenuPadreId,
+                Nombre = m.Nombre,
+                Ruta = m.Ruta,
+                Icono = m.Icono,
+                Orden = m.Orden
+            }).ToList();
+
+            // construir jerarquía
+            var menuJerarquico = menuPlano
+                .Where(m => m.MenuPadreId == null)
+                .Select(padre =>
+                {
+                    padre.Hijos = menuPlano
+                        .Where(h => h.MenuPadreId == padre.MenuId)
+                        .OrderBy(h => h.Orden)
+                        .ToList();
+                    return padre;
+                })
+                .OrderBy(m => m.Orden)
+                .ToList();
+
+            // guardar en sesión
             HttpContext.Session.SetString(
                 "Menu",
-                JsonSerializer.Serialize(menu)
+                JsonSerializer.Serialize(menuJerarquico)
             );
 
-            return RedirectToAction("Index", "Dashboard");
+
+            // guardar en sesión
+            HttpContext.Session.SetString(
+                "Menu",
+                JsonSerializer.Serialize(menuJerarquico)
+            );
+
+
+            return RedirectToAction("Index", "Home");
         }
 
-  
+        [HttpGet]
         public IActionResult Registretion()
         {
-            return View();
+            return View(new RegisterViewModel());
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Registretion(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var result = _registerRepo.RegistrarUsuario(
+                model.Usuario,
+                model.Clave,
+                model.Nombre,
+                model.Email
+            );
+
+            if (result == null || result.Codigo != "USER_CREATED")
+            {
+                model.MensajeError = result?.Descripcion ?? "No fue posible registrar el usuario";
+                return View(model);
+            }
+
+            model.MensajeOk = "Cuenta creada correctamente. Ahora puedes iniciar sesión.";
+            ModelState.Clear();
+
+            return View(new RegisterViewModel { MensajeOk = model.MensajeOk });
+        }
+
+
     }
 }

@@ -14,11 +14,7 @@ namespace Web.Filters
             // 1️⃣ Validar sesión
             if (string.IsNullOrEmpty(session.GetString("RolId")))
             {
-                context.Result = new RedirectToActionResult(
-                    "Login",
-                    "Authentication",
-                    null
-                );
+                context.Result = new RedirectToActionResult("Login", "Authentication", null);
                 return;
             }
 
@@ -30,7 +26,12 @@ namespace Web.Filters
                 return;
             }
 
-            var menu = JsonSerializer.Deserialize<List<MenuItem>>(menuJson);
+            var menu = JsonSerializer.Deserialize<List<MenuDto>>(menuJson);
+            if (menu == null)
+            {
+                context.Result = new StatusCodeResult(403);
+                return;
+            }
 
             // 3️⃣ Ruta actual
             var rutaActual = context.HttpContext.Request.Path.Value?
@@ -40,10 +41,16 @@ namespace Web.Filters
             if (string.IsNullOrEmpty(rutaActual))
                 return;
 
-            // 4️⃣ Validar acceso
-            var tieneAcceso = menu!.Any(m =>
-                !string.IsNullOrEmpty(m.Ruta) &&
-                m.Ruta.ToLower().TrimEnd('/') == rutaActual
+            // 4️⃣ Aplanar menú (padres + hijos)
+            var rutasPermitidas = menu
+                .SelectMany(m => new[] { m }.Concat(m.Hijos))
+                .Where(m => !string.IsNullOrEmpty(m.Ruta))
+                .Select(m => m.Ruta!.ToLower().TrimEnd('/'))
+                .ToList();
+
+            // 5️⃣ Validar acceso
+            var tieneAcceso = rutasPermitidas.Any(r =>
+                rutaActual == r || rutaActual.StartsWith(r)
             );
 
             if (!tieneAcceso)

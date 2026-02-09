@@ -18,6 +18,11 @@ namespace Web.Controllers
         {
             return View();
         }
+        [MenuAuthorize]
+        public IActionResult RegistroFinal()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {

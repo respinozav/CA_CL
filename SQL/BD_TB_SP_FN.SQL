@@ -1,12 +1,12 @@
 USE [BD_CA_CL]
 GO
-/****** Object:  User [User_BD_CA_CL]    Script Date: 29-01-2026 23:28:04 ******/
+/****** Object:  User [User_BD_CA_CL]    Script Date: 08-02-2026 23:26:51 ******/
 CREATE USER [User_BD_CA_CL] FOR LOGIN [User_BD_CA_CL] WITH DEFAULT_SCHEMA=[dbo]
 GO
-/****** Object:  Schema [app]    Script Date: 29-01-2026 23:28:04 ******/
+/****** Object:  Schema [app]    Script Date: 08-02-2026 23:26:51 ******/
 CREATE SCHEMA [app]
 GO
-/****** Object:  UserDefinedFunction [app].[fn_HashPassword]    Script Date: 29-01-2026 23:28:04 ******/
+/****** Object:  UserDefinedFunction [app].[fn_HashPassword]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -30,7 +30,7 @@ BEGIN
     RETURN CONVERT(NVARCHAR(255), @Hash, 2);
 END;
 GO
-/****** Object:  Table [app].[HistorialLogin]    Script Date: 29-01-2026 23:28:04 ******/
+/****** Object:  Table [app].[HistorialLogin]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -48,7 +48,7 @@ CREATE TABLE [app].[HistorialLogin](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[Menu]    Script Date: 29-01-2026 23:28:05 ******/
+/****** Object:  Table [app].[Menu]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -67,7 +67,7 @@ CREATE TABLE [app].[Menu](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[ObservacionLogin]    Script Date: 29-01-2026 23:28:05 ******/
+/****** Object:  Table [app].[ObservacionLogin]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -89,7 +89,7 @@ CREATE TABLE [app].[ObservacionLogin](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[Rol]    Script Date: 29-01-2026 23:28:05 ******/
+/****** Object:  Table [app].[Rol]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -110,7 +110,7 @@ CREATE TABLE [app].[Rol](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[RolMenu]    Script Date: 29-01-2026 23:28:05 ******/
+/****** Object:  Table [app].[RolMenu]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -125,7 +125,7 @@ CREATE TABLE [app].[RolMenu](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[Usuario]    Script Date: 29-01-2026 23:28:05 ******/
+/****** Object:  Table [app].[Usuario]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -205,14 +205,205 @@ REFERENCES [app].[Rol] ([RolId])
 GO
 ALTER TABLE [app].[Usuario] CHECK CONSTRAINT [FK_Usuario_Rol]
 GO
-/****** Object:  StoredProcedure [app].[sp_LoginUsuario]    Script Date: 29-01-2026 23:28:05 ******/
+/****** Object:  StoredProcedure [app].[sp_CrearMenuHijo]    Script Date: 08-02-2026 23:26:51 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [app].[sp_CrearMenuHijo]
+    @MenuPadreId UNIQUEIDENTIFIER,
+    @Nombre NVARCHAR(100),
+    @Ruta NVARCHAR(200),
+    @Orden INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ExisteNombre NVARCHAR(100);
+    DECLARE @MenuId UNIQUEIDENTIFIER;
+
+    -- Verificar si ya existe un menú hijo con ese orden dentro del mismo padre
+    SELECT @ExisteNombre = Nombre
+    FROM [app].[Menu]
+    WHERE MenuPadreId = @MenuPadreId
+      AND Orden = @Orden;
+
+    IF @ExisteNombre IS NOT NULL
+    BEGIN
+        SELECT 
+            Mensaje = CONCAT('Ya existe un número de orden para este menú padre. El nombre que ocupa ese orden es: ', @ExisteNombre),
+            MenuId = NULL;
+        RETURN;
+    END
+
+    -- Verificar si ya existe un menú hijo con el mismo nombre dentro del mismo padre
+    SELECT @ExisteNombre = Nombre
+    FROM [app].[Menu]
+    WHERE MenuPadreId = @MenuPadreId
+      AND Nombre = @Nombre;
+
+    IF @ExisteNombre IS NOT NULL
+    BEGIN
+        SELECT 
+            Mensaje = CONCAT('Ya existe un menú hijo con el nombre: ', @ExisteNombre, ' bajo este menú padre.'),
+            MenuId = NULL;
+        RETURN;
+    END
+
+    -- Crear nuevo MenuId
+    SET @MenuId = NEWID();
+
+    -- Insertar nuevo menú hijo (Icono siempre NULL)
+    INSERT INTO [app].[Menu] (
+        MenuId,
+        MenuPadreId,
+        Nombre,
+        Icono,
+        Ruta,
+        Orden,
+        EsActivo
+    )
+    VALUES (
+        @MenuId,
+        @MenuPadreId,
+        @Nombre,
+        NULL,          -- Icono fijo en NULL
+        @Ruta,
+        @Orden,
+        1
+    );
+
+    -- Retornar mensaje de éxito y el MenuId creado
+    SELECT 
+        Mensaje = 'Se creó el menú hijo con éxito.',
+        MenuId = @MenuId;
+END;
+GO
+/****** Object:  StoredProcedure [app].[sp_CrearMenuPadre]    Script Date: 08-02-2026 23:26:51 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [app].[sp_CrearMenuPadre]
+    @Nombre NVARCHAR(100),
+    @Icono NVARCHAR(50),
+    @Ruta NVARCHAR(200),
+    @Orden INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @ExisteNombre NVARCHAR(100);
+    DECLARE @MenuId UNIQUEIDENTIFIER;
+
+    -- Verificar si ya existe un menú padre con ese orden
+    SELECT @ExisteNombre = Nombre
+    FROM [app].[Menu]
+    WHERE MenuPadreId IS NULL
+      AND Orden = @Orden;
+
+    IF @ExisteNombre IS NOT NULL
+    BEGIN
+        SELECT 
+            Mensaje = CONCAT('Ya existe un número de orden para el menú padre. El nombre que ocupa ese orden es: ', @ExisteNombre),
+            MenuId = NULL;
+        RETURN;
+    END
+
+    -- Verificar si ya existe un menú padre con ese nombre
+    SELECT @ExisteNombre = Nombre
+    FROM [app].[Menu]
+    WHERE MenuPadreId IS NULL
+      AND Nombre = @Nombre;
+
+    IF @ExisteNombre IS NOT NULL
+    BEGIN
+        SELECT 
+            Mensaje = CONCAT('Ya existe un menú padre con el nombre: ', @ExisteNombre),
+            MenuId = NULL;
+        RETURN;
+    END
+
+    -- Crear nuevo MenuId
+    SET @MenuId = NEWID();
+
+    -- Insertar nuevo menú padre
+    INSERT INTO [app].[Menu] (
+        MenuId,
+        MenuPadreId,
+        Nombre,
+        Icono,
+        Ruta,
+        Orden,
+        EsActivo
+    )
+    VALUES (
+        @MenuId,
+        NULL,
+        @Nombre,
+        @Icono,
+        @Ruta,
+        @Orden,
+        1
+    );
+
+    -- Retornar mensaje de éxito y el MenuId creado
+    SELECT 
+        Mensaje = 'Se creó el menú padre con éxito.',
+        MenuId = @MenuId;
+END;
+GO
+/****** Object:  StoredProcedure [app].[sp_CrearMenuRol]    Script Date: 08-02-2026 23:26:51 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [app].[sp_CrearMenuRol]
+    @RolId UNIQUEIDENTIFIER,
+    @MenuId UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Existe INT;
+
+    -- Validar si ya existe la relación RolId - MenuId
+    SELECT @Existe = COUNT(*)
+    FROM [app].[RolMenu]
+    WHERE RolId = @RolId
+      AND MenuId = @MenuId;
+
+    IF @Existe > 0
+    BEGIN
+        SELECT 
+            Mensaje = CONCAT('Ya existe el registro con RolId: ', CAST(@RolId AS NVARCHAR(36)), 
+                             ' y MenuId: ', CAST(@MenuId AS NVARCHAR(36)));
+        RETURN;
+    END
+
+    -- Insertar nuevo registro
+    INSERT INTO [app].[RolMenu] (
+        RolId,
+        MenuId
+    )
+    VALUES (
+        @RolId,
+        @MenuId
+    );
+
+    -- Retornar mensaje de éxito
+    SELECT 
+        Mensaje = 'Se creó el registro Rol-Menu con éxito.';
+END;
+GO
+/****** Object:  StoredProcedure [app].[sp_LoginUsuario]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [app].[sp_LoginUsuario]
 (
-    @Usuario   NVARCHAR(100),
+    @Email     NVARCHAR(100),
     @Clave     NVARCHAR(200),
     @IpOrigen  NVARCHAR(45)
 )
@@ -227,7 +418,8 @@ BEGIN
         @ObservacionLoginId UNIQUEIDENTIFIER,
         @Codigo NVARCHAR(50),
         @Descripcion NVARCHAR(255),
-        @ClaveHash NVARCHAR(255);
+        @ClaveHash NVARCHAR(255),
+		@RolNombre NVARCHAR(100);
 
     -- Hash de la clave
     SET @ClaveHash = app.fn_HashPassword(@Clave);
@@ -236,9 +428,11 @@ BEGIN
     SELECT
         @UsuarioId = u.UsuarioId,
         @RolId = u.RolId,
-        @Nombre = u.Nombre
+        @Nombre = u.Nombre,
+		@RolNombre = r.Nombre
     FROM app.Usuario u
-    WHERE u.Usuario = @Usuario
+	LEFT JOIN app.Rol r on u.RolId = r.RolId
+    WHERE u.Email = @Email
       AND u.EsActivo = 1;
 
     /* ==========================
@@ -274,7 +468,9 @@ BEGIN
             @Descripcion AS Descripcion,
             NULL AS UsuarioId,
             NULL AS RolId,
-            NULL AS Nombre;
+            NULL AS Nombre,
+			NULL AS Email,
+			NULL AS RolNombre;
 
         RETURN;
     END
@@ -316,9 +512,11 @@ BEGIN
         SELECT
             @Codigo AS Codigo,
             @Descripcion AS Descripcion,
-            @UsuarioId AS UsuarioId,
-            @RolId AS RolId,
-            @Nombre AS Nombre;
+			NULL AS UsuarioId,
+			NULL AS RolId,
+			NULL AS Nombre,
+			NULL AS Email,
+			NULL AS RolNombre;
 
         RETURN;
     END
@@ -354,10 +552,12 @@ BEGIN
         @Descripcion AS Descripcion,
         @UsuarioId AS UsuarioId,
         @RolId AS RolId,
-        @Nombre AS Nombre;
+        @Nombre AS Nombre,
+		@Email AS Email,
+		@RolNombre as RolNombre;
 END
 GO
-/****** Object:  StoredProcedure [app].[sp_MenuPorRol]    Script Date: 29-01-2026 23:28:05 ******/
+/****** Object:  StoredProcedure [app].[sp_MenuPorRol]    Script Date: 08-02-2026 23:26:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -383,4 +583,90 @@ BEGIN
         ISNULL(m.MenuPadreId, m.MenuId),
         m.Orden;
 END;
+GO
+/****** Object:  StoredProcedure [app].[sp_RegistrarUsuario]    Script Date: 08-02-2026 23:26:51 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [app].[sp_RegistrarUsuario]
+(
+    @Usuario NVARCHAR(50),
+    @Clave   NVARCHAR(200),
+    @Nombre  NVARCHAR(150),
+    @Email   NVARCHAR(150)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE
+        @ClaveHash NVARCHAR(255),
+        @RolId UNIQUEIDENTIFIER = '56F158D6-9B04-F111-851D-0EA34A736CA1',
+        @Codigo NVARCHAR(50),
+        @Descripcion NVARCHAR(255);
+
+    /* ==========================
+       VALIDAR USUARIO EXISTENTE
+       ========================== */
+    IF EXISTS (
+        SELECT 1
+        FROM app.Usuario
+        WHERE Usuario = @Usuario
+    )
+    BEGIN
+        SELECT
+            'USER_ALREADY_EXISTS' AS Codigo,
+            'El nombre de usuario ya existe.' AS Descripcion;
+
+        RETURN;
+    END
+
+    /* ==========================
+       VALIDAR EMAIL EXISTENTE
+       ========================== */
+    IF EXISTS (
+        SELECT 1
+        FROM app.Usuario
+        WHERE Email = @Email
+    )
+    BEGIN
+        SELECT
+            'EMAIL_ALREADY_EXISTS' AS Codigo,
+            'El correo electrónico ya se encuentra registrado.' AS Descripcion;
+
+        RETURN;
+    END
+
+    /* ==========================
+       REGISTRO DE USUARIO
+       ========================== */
+    SET @ClaveHash = app.fn_HashPassword(@Clave);
+
+    INSERT INTO app.Usuario
+    (
+        Usuario,
+        Clave,
+        Nombre,
+        Email,
+        RolId,
+        EsActivo,
+        FechaCreacion
+    )
+    VALUES
+    (
+        @Usuario,
+        @ClaveHash,
+        @Nombre,
+        @Email,
+        @RolId,
+        1,
+        SYSDATETIME()
+    );
+
+    SELECT
+        'USER_CREATED' AS Codigo,
+        'Usuario registrado correctamente.' AS Descripcion;
+END
 GO
