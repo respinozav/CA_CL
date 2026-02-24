@@ -21,6 +21,10 @@ namespace Web.Controllers
             _registerRepo = registerRepo;
         }
 
+        /* =====================================================
+           LOGIN
+        ===================================================== */
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -36,25 +40,23 @@ namespace Web.Controllers
 
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-            // 🔐 LOGIN POR EMAIL
             var result = _loginRepo.LoginPorEmail(model.Email, model.Clave, ip);
 
-            // ❌ Login fallido
             if (result == null || result.Codigo != "LOGIN_OK")
             {
-                model.MensajeError = result?.Descripcion ?? "No fue posible iniciar sesión";
+                model.MensajeError = result?.Descripcion ?? "No fue posible iniciar sesión.";
                 return View(model);
             }
 
-            // ✅ Login exitoso → Session
+            // 🔐 Guardar datos en sesión
             HttpContext.Session.SetString("UsuarioId", result.UsuarioId!.Value.ToString());
             HttpContext.Session.SetString("RolId", result.RolId!.Value.ToString());
             HttpContext.Session.SetString("Nombre", result.Nombre!);
             HttpContext.Session.SetString("Email", result.Email!);
 
+            // Construcción del menú jerárquico
             var menuPlanoItem = _menuRepo.ObtenerMenuPorRol(result.RolId.Value);
 
-            // mapear MenuItem → MenuDto
             var menuPlano = menuPlanoItem.Select(m => new MenuDto
             {
                 MenuId = m.MenuId,
@@ -65,7 +67,6 @@ namespace Web.Controllers
                 Orden = m.Orden
             }).ToList();
 
-            // construir jerarquía
             var menuJerarquico = menuPlano
                 .Where(m => m.MenuPadreId == null)
                 .Select(padre =>
@@ -79,22 +80,17 @@ namespace Web.Controllers
                 .OrderBy(m => m.Orden)
                 .ToList();
 
-            // guardar en sesión
             HttpContext.Session.SetString(
                 "Menu",
                 JsonSerializer.Serialize(menuJerarquico)
             );
-
-
-            // guardar en sesión
-            HttpContext.Session.SetString(
-                "Menu",
-                JsonSerializer.Serialize(menuJerarquico)
-            );
-
 
             return RedirectToAction("Index", "Home");
         }
+
+        /* =====================================================
+           REGISTRO
+        ===================================================== */
 
         [HttpGet]
         public IActionResult Registretion()
@@ -116,18 +112,37 @@ namespace Web.Controllers
                 model.Email
             );
 
-            if (result == null || result.Codigo != "USER_CREATED")
+            if (result == null || result.Codigo != "USER_CREATED_PENDING_CONFIRMATION")
             {
-                model.MensajeError = result?.Descripcion ?? "No fue posible registrar el usuario";
+                model.MensajeError = result?.Descripcion ?? "No fue posible registrar el usuario.";
                 return View(model);
             }
 
-            model.MensajeOk = "Cuenta creada correctamente. Ahora puedes iniciar sesión.";
             ModelState.Clear();
 
-            return View(new RegisterViewModel { MensajeOk = model.MensajeOk });
+            return View(new RegisterViewModel
+            {
+                MensajeOk = "Revisa tu correo para confirmar tu cuenta antes de iniciar sesión."
+            });
         }
 
+        /* =====================================================
+           CONFIRMAR EMAIL
+        ===================================================== */
 
+        [HttpGet]
+        public IActionResult ConfirmarEmail(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return View("TokenInvalido", "Token no válido.");
+
+            var result = _registerRepo.ConfirmarEmail(token);
+
+            if (result.Codigo == "EMAIL_CONFIRMED")
+                return View("EmailConfirmado", result.Descripcion);
+
+            return View("TokenInvalido",
+                result.Descripcion ?? "El enlace no es válido o ha expirado.");
+        }
     }
 }

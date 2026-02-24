@@ -1,12 +1,17 @@
 USE [BD_CA_CL]
 GO
-/****** Object:  User [User_BD_CA_CL]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  User [User_BD_CA_CL]    Script Date: 23-02-2026 23:10:34 ******/
 CREATE USER [User_BD_CA_CL] FOR LOGIN [User_BD_CA_CL] WITH DEFAULT_SCHEMA=[dbo]
 GO
-/****** Object:  Schema [app]    Script Date: 08-02-2026 23:26:51 ******/
+ALTER ROLE [db_owner] ADD MEMBER [User_BD_CA_CL]
+GO
+/****** Object:  Schema [app]    Script Date: 23-02-2026 23:10:34 ******/
 CREATE SCHEMA [app]
 GO
-/****** Object:  UserDefinedFunction [app].[fn_HashPassword]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  Schema [web]    Script Date: 23-02-2026 23:10:34 ******/
+CREATE SCHEMA [web]
+GO
+/****** Object:  UserDefinedFunction [app].[fn_HashPassword]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -30,7 +35,7 @@ BEGIN
     RETURN CONVERT(NVARCHAR(255), @Hash, 2);
 END;
 GO
-/****** Object:  Table [app].[HistorialLogin]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  Table [app].[HistorialLogin]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -48,7 +53,7 @@ CREATE TABLE [app].[HistorialLogin](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[Menu]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  Table [app].[Menu]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -67,7 +72,7 @@ CREATE TABLE [app].[Menu](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[ObservacionLogin]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  Table [app].[ObservacionLogin]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -89,7 +94,7 @@ CREATE TABLE [app].[ObservacionLogin](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[Rol]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  Table [app].[Rol]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -110,7 +115,7 @@ CREATE TABLE [app].[Rol](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[RolMenu]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  Table [app].[RolMenu]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -125,7 +130,7 @@ CREATE TABLE [app].[RolMenu](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [app].[Usuario]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  Table [app].[Usuario]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -139,6 +144,9 @@ CREATE TABLE [app].[Usuario](
 	[RolId] [uniqueidentifier] NOT NULL,
 	[EsActivo] [bit] NOT NULL,
 	[FechaCreacion] [datetime2](7) NOT NULL,
+	[TokenConfirmacion] [nvarchar](200) NULL,
+	[FechaExpiracionToken] [datetime2](7) NULL,
+	[EmailConfirmado] [bit] NOT NULL,
  CONSTRAINT [PK_Usuario] PRIMARY KEY CLUSTERED 
 (
 	[UsuarioId] ASC
@@ -146,6 +154,22 @@ CREATE TABLE [app].[Usuario](
  CONSTRAINT [UQ_Usuario_Usuario] UNIQUE NONCLUSTERED 
 (
 	[Usuario] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [web].[grupos]    Script Date: 23-02-2026 23:10:34 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [web].[grupos](
+	[UID] [uniqueidentifier] NOT NULL,
+	[Nombre] [nvarchar](50) NOT NULL,
+	[EdadDesde] [int] NOT NULL,
+	[EdadHasta] [int] NOT NULL,
+ CONSTRAINT [PK_web_grupos] PRIMARY KEY CLUSTERED 
+(
+	[UID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -174,6 +198,10 @@ GO
 ALTER TABLE [app].[Usuario] ADD  DEFAULT ((1)) FOR [EsActivo]
 GO
 ALTER TABLE [app].[Usuario] ADD  DEFAULT (sysdatetime()) FOR [FechaCreacion]
+GO
+ALTER TABLE [app].[Usuario] ADD  DEFAULT ((0)) FOR [EmailConfirmado]
+GO
+ALTER TABLE [web].[grupos] ADD  DEFAULT (newid()) FOR [UID]
 GO
 ALTER TABLE [app].[HistorialLogin]  WITH CHECK ADD  CONSTRAINT [FK_HistorialLogin_Observacion] FOREIGN KEY([ObservacionLoginId])
 REFERENCES [app].[ObservacionLogin] ([ObservacionLoginId])
@@ -205,7 +233,49 @@ REFERENCES [app].[Rol] ([RolId])
 GO
 ALTER TABLE [app].[Usuario] CHECK CONSTRAINT [FK_Usuario_Rol]
 GO
-/****** Object:  StoredProcedure [app].[sp_CrearMenuHijo]    Script Date: 08-02-2026 23:26:51 ******/
+ALTER TABLE [web].[grupos]  WITH CHECK ADD  CONSTRAINT [CK_web_grupos_RangoEdad] CHECK  (([EdadDesde]<[EdadHasta]))
+GO
+ALTER TABLE [web].[grupos] CHECK CONSTRAINT [CK_web_grupos_RangoEdad]
+GO
+/****** Object:  StoredProcedure [app].[sp_ConfirmarEmail]    Script Date: 23-02-2026 23:10:34 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [app].[sp_ConfirmarEmail]
+(
+    @Token NVARCHAR(200)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT 1
+        FROM app.Usuario
+        WHERE TokenConfirmacion = @Token
+        AND FechaExpiracionToken >= SYSDATETIME()
+        AND EmailConfirmado = 0
+    )
+    BEGIN
+        UPDATE app.Usuario
+        SET EmailConfirmado = 1,
+            EsActivo = 1,
+            TokenConfirmacion = NULL,
+            FechaExpiracionToken = NULL
+        WHERE TokenConfirmacion = @Token;
+
+        SELECT 'EMAIL_CONFIRMED' AS Codigo,
+               'Cuenta activada correctamente.' AS Descripcion;
+    END
+    ELSE
+    BEGIN
+        SELECT 'INVALID_OR_EXPIRED_TOKEN' AS Codigo,
+               'El enlace no es válido o ha expirado.' AS Descripcion;
+    END
+END
+GO
+/****** Object:  StoredProcedure [app].[sp_CrearMenuHijo]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -279,7 +349,7 @@ BEGIN
         MenuId = @MenuId;
 END;
 GO
-/****** Object:  StoredProcedure [app].[sp_CrearMenuPadre]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  StoredProcedure [app].[sp_CrearMenuPadre]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -353,7 +423,7 @@ BEGIN
         MenuId = @MenuId;
 END;
 GO
-/****** Object:  StoredProcedure [app].[sp_CrearMenuRol]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  StoredProcedure [app].[sp_CrearMenuRol]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -396,7 +466,7 @@ BEGIN
         Mensaje = 'Se creó el registro Rol-Menu con éxito.';
 END;
 GO
-/****** Object:  StoredProcedure [app].[sp_LoginUsuario]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  StoredProcedure [app].[sp_LoginUsuario]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -415,23 +485,26 @@ BEGIN
         @UsuarioId UNIQUEIDENTIFIER = NULL,
         @RolId UNIQUEIDENTIFIER = NULL,
         @Nombre NVARCHAR(150) = NULL,
+        @RolNombre NVARCHAR(100),
+        @EmailConfirmado BIT = 0,
         @ObservacionLoginId UNIQUEIDENTIFIER,
         @Codigo NVARCHAR(50),
         @Descripcion NVARCHAR(255),
-        @ClaveHash NVARCHAR(255),
-		@RolNombre NVARCHAR(100);
+        @ClaveHash NVARCHAR(255);
 
-    -- Hash de la clave
     SET @ClaveHash = app.fn_HashPassword(@Clave);
 
-    -- Buscar usuario
+    /* ==========================
+       BUSCAR USUARIO
+       ========================== */
     SELECT
         @UsuarioId = u.UsuarioId,
         @RolId = u.RolId,
         @Nombre = u.Nombre,
-		@RolNombre = r.Nombre
+        @RolNombre = r.Nombre,
+        @EmailConfirmado = u.EmailConfirmado
     FROM app.Usuario u
-	LEFT JOIN app.Rol r on u.RolId = r.RolId
+    LEFT JOIN app.Rol r ON u.RolId = r.RolId
     WHERE u.Email = @Email
       AND u.EsActivo = 1;
 
@@ -449,29 +522,37 @@ BEGIN
           AND ol.EsActivo = 1;
 
         INSERT INTO app.HistorialLogin
-        (
-            UsuarioId,
-            IpOrigen,
-            Observacion,
-            ObservacionLoginId
-        )
+        (UsuarioId, IpOrigen, Observacion, ObservacionLoginId)
         VALUES
-        (
-            NULL,
-            @IpOrigen,
-            @Descripcion,
-            @ObservacionLoginId
-        );
+        (NULL, @IpOrigen, @Descripcion, @ObservacionLoginId);
 
+        SELECT @Codigo AS Codigo, @Descripcion AS Descripcion,
+               NULL AS UsuarioId, NULL AS RolId,
+               NULL AS Nombre, NULL AS Email, NULL AS RolNombre;
+        RETURN;
+    END
+
+    /* ==========================
+       EMAIL NO CONFIRMADO
+       ========================== */
+    IF @EmailConfirmado = 0
+    BEGIN
         SELECT
-            @Codigo AS Codigo,
-            @Descripcion AS Descripcion,
-            NULL AS UsuarioId,
-            NULL AS RolId,
-            NULL AS Nombre,
-			NULL AS Email,
-			NULL AS RolNombre;
+            @ObservacionLoginId = ol.ObservacionLoginId,
+            @Codigo = 'EMAIL_NOT_CONFIRMED',
+            @Descripcion = 'Debe confirmar su correo antes de iniciar sesión.'
+        FROM app.ObservacionLogin ol
+        WHERE ol.Codigo = 'EMAIL_NOT_CONFIRMED'
+          AND ol.EsActivo = 1;
 
+        INSERT INTO app.HistorialLogin
+        (UsuarioId, IpOrigen, Observacion, ObservacionLoginId)
+        VALUES
+        (@UsuarioId, @IpOrigen, @Descripcion, @ObservacionLoginId);
+
+        SELECT @Codigo AS Codigo, @Descripcion AS Descripcion,
+               NULL AS UsuarioId, NULL AS RolId,
+               NULL AS Nombre, NULL AS Email, NULL AS RolNombre;
         RETURN;
     END
 
@@ -495,29 +576,13 @@ BEGIN
           AND ol.EsActivo = 1;
 
         INSERT INTO app.HistorialLogin
-        (
-            UsuarioId,
-            IpOrigen,
-            Observacion,
-            ObservacionLoginId
-        )
+        (UsuarioId, IpOrigen, Observacion, ObservacionLoginId)
         VALUES
-        (
-            @UsuarioId,
-            @IpOrigen,
-            @Descripcion,
-            @ObservacionLoginId
-        );
+        (@UsuarioId, @IpOrigen, @Descripcion, @ObservacionLoginId);
 
-        SELECT
-            @Codigo AS Codigo,
-            @Descripcion AS Descripcion,
-			NULL AS UsuarioId,
-			NULL AS RolId,
-			NULL AS Nombre,
-			NULL AS Email,
-			NULL AS RolNombre;
-
+        SELECT @Codigo AS Codigo, @Descripcion AS Descripcion,
+               NULL AS UsuarioId, NULL AS RolId,
+               NULL AS Nombre, NULL AS Email, NULL AS RolNombre;
         RETURN;
     END
 
@@ -533,19 +598,9 @@ BEGIN
       AND ol.EsActivo = 1;
 
     INSERT INTO app.HistorialLogin
-    (
-        UsuarioId,
-        IpOrigen,
-        Observacion,
-        ObservacionLoginId
-    )
+    (UsuarioId, IpOrigen, Observacion, ObservacionLoginId)
     VALUES
-    (
-        @UsuarioId,
-        @IpOrigen,
-        @Descripcion,
-        @ObservacionLoginId
-    );
+    (@UsuarioId, @IpOrigen, @Descripcion, @ObservacionLoginId);
 
     SELECT
         @Codigo AS Codigo,
@@ -553,11 +608,11 @@ BEGIN
         @UsuarioId AS UsuarioId,
         @RolId AS RolId,
         @Nombre AS Nombre,
-		@Email AS Email,
-		@RolNombre as RolNombre;
+        @Email AS Email,
+        @RolNombre AS RolNombre;
 END
 GO
-/****** Object:  StoredProcedure [app].[sp_MenuPorRol]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  StoredProcedure [app].[sp_MenuPorRol]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -584,12 +639,11 @@ BEGIN
         m.Orden;
 END;
 GO
-/****** Object:  StoredProcedure [app].[sp_RegistrarUsuario]    Script Date: 08-02-2026 23:26:51 ******/
+/****** Object:  StoredProcedure [app].[sp_RegistrarUsuario]    Script Date: 23-02-2026 23:10:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 CREATE PROCEDURE [app].[sp_RegistrarUsuario]
 (
     @Usuario NVARCHAR(50),
@@ -604,46 +658,47 @@ BEGIN
     DECLARE
         @ClaveHash NVARCHAR(255),
         @RolId UNIQUEIDENTIFIER = '56F158D6-9B04-F111-851D-0EA34A736CA1',
-        @Codigo NVARCHAR(50),
-        @Descripcion NVARCHAR(255);
+        @Token NVARCHAR(200),
+        @FechaExpiracion DATETIME2,
+        @Link NVARCHAR(500),
+        @Mensaje NVARCHAR(MAX);
 
     /* ==========================
        VALIDAR USUARIO EXISTENTE
        ========================== */
-    IF EXISTS (
-        SELECT 1
-        FROM app.Usuario
-        WHERE Usuario = @Usuario
-    )
+    IF EXISTS (SELECT 1 FROM app.Usuario WHERE Usuario = @Usuario)
     BEGIN
-        SELECT
-            'USER_ALREADY_EXISTS' AS Codigo,
-            'El nombre de usuario ya existe.' AS Descripcion;
-
+        SELECT 'USER_ALREADY_EXISTS' AS Codigo,
+               'El nombre de usuario ya existe.' AS Descripcion;
         RETURN;
     END
 
     /* ==========================
        VALIDAR EMAIL EXISTENTE
        ========================== */
-    IF EXISTS (
-        SELECT 1
-        FROM app.Usuario
-        WHERE Email = @Email
-    )
+    IF EXISTS (SELECT 1 FROM app.Usuario WHERE Email = @Email)
     BEGIN
-        SELECT
-            'EMAIL_ALREADY_EXISTS' AS Codigo,
-            'El correo electrónico ya se encuentra registrado.' AS Descripcion;
-
+        SELECT 'EMAIL_ALREADY_EXISTS' AS Codigo,
+               'El correo electrónico ya se encuentra registrado.' AS Descripcion;
         RETURN;
     END
 
     /* ==========================
-       REGISTRO DE USUARIO
+       GENERAR TOKEN
+       ========================== */
+    SET @Token = REPLACE(CONVERT(NVARCHAR(200), NEWID()), '-', '') 
+               + REPLACE(CONVERT(NVARCHAR(200), NEWID()), '-', '');
+
+    SET @FechaExpiracion = DATEADD(HOUR, 24, SYSDATETIME());
+
+    /* ==========================
+       HASH PASSWORD
        ========================== */
     SET @ClaveHash = app.fn_HashPassword(@Clave);
 
+    /* ==========================
+       INSERTAR USUARIO (NO ACTIVO)
+       ========================== */
     INSERT INTO app.Usuario
     (
         Usuario,
@@ -652,7 +707,10 @@ BEGIN
         Email,
         RolId,
         EsActivo,
-        FechaCreacion
+        FechaCreacion,
+        TokenConfirmacion,
+        FechaExpiracionToken,
+        EmailConfirmado
     )
     VALUES
     (
@@ -661,12 +719,44 @@ BEGIN
         @Nombre,
         @Email,
         @RolId,
-        1,
-        SYSDATETIME()
+        0, -- 🔒 NO ACTIVO HASTA CONFIRMAR
+        SYSDATETIME(),
+        @Token,
+        @FechaExpiracion,
+        0
     );
 
+    /* ==========================
+       LINK CONFIRMACION
+       ========================== */
+    SET @Link = 'https://conociendoamistades.cl/Authentication/ConfirmarEmail?token=' + @Token;
+
+    SET @Mensaje = '
+Hola ' + @Nombre + ',
+
+Gracias por registrarte en Conociendo Amistades.
+
+Para activar tu cuenta haz clic en el siguiente enlace:
+
+' + @Link + '
+
+Este enlace expirará en 24 horas.
+
+Saludos,
+Equipo Conociendo Amistades
+';
+
+    /* ==========================
+       ENVIAR CORREO
+       ========================== */
+    EXEC msdb.dbo.sp_send_dbmail
+        @profile_name = 'PerfilCorreoCA', -- CAMBIAR POR TU PERFIL
+        @recipients = @Email,
+        @subject = 'Confirma tu cuenta - Conociendo Amistades',
+        @body = @Mensaje;
+
     SELECT
-        'USER_CREATED' AS Codigo,
-        'Usuario registrado correctamente.' AS Descripcion;
+        'USER_CREATED_PENDING_CONFIRMATION' AS Codigo,
+        'Usuario registrado. Revise su correo para activar la cuenta.' AS Descripcion;
 END
 GO
