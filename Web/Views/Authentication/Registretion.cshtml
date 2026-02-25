@@ -1,12 +1,12 @@
 ﻿@model Web.Models.RegisterViewModel
 
 @{
-    ViewBag.Title = "Registretion";
+    ViewBag.Title = "Registro";
     Layout = null;
 }
 
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
     @Html.Partial("~/Views/Shared/_title_meta.cshtml")
     @Html.Partial("~/Views/Shared/_head_css.cshtml")
@@ -17,12 +17,8 @@
             <div class="row justify-content-center">
                 <div class="col-md-10">
                     <div class="text-center mb-5">
-                        <a href="/" class="auth-logo">
-                            <img src="~/assets/images/logo-dark.png" alt="Logo Dark" height="28" class="auth-logo-dark">
-                            <img src="~/assets/images/logo-light.png" alt="Logo Light" height="28" class="auth-logo-light">
-                        </a>
                         <p class="font-size-15 text-muted mt-3">
-                            Create your account
+                            Crea tu cuenta en ConociendoAmistades.cl
                         </p>
                     </div>
 
@@ -32,13 +28,13 @@
                                 <div class="p-lg-5 p-4">
 
                                     <div>
-                                        <h5>Register account</h5>
-                                        <p class="text-muted">Get your free account now.</p>
+                                        <h5>Crear cuenta</h5>
+                                        <p class="text-muted">Obtén tu cuenta y comienza a conocer nuevas amistades.</p>
                                     </div>
 
                                     <div class="mt-4 pt-3">
 
-                                        <form asp-action="Registretion" method="post">
+                                        <form asp-action="Registro" method="post">
                                             @Html.AntiForgeryToken()
 
                                             @* 🔴 Error *@
@@ -58,41 +54,73 @@
                                             }
 
                                             <div class="mb-3">
-                                                <label class="fw-semibold">Email</label>
-                                                <input asp-for="Email" class="form-control" placeholder="Enter email" />
+                                                <label class="fw-semibold">Correo electrónico</label>
+                                                <input asp-for="Email" class="form-control" placeholder="Ingresa tu correo electrónico" />
                                                 <span asp-validation-for="Email" class="text-danger"></span>
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="fw-semibold">Username</label>
-                                                <input asp-for="Usuario" class="form-control" placeholder="Enter username" />
+                                                <label class="fw-semibold">Nombre de usuario</label>
+                                                <input asp-for="Usuario" class="form-control" placeholder="Crea tu nombre de usuario" />
                                                 <span asp-validation-for="Usuario" class="text-danger"></span>
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="fw-semibold">Full name</label>
-                                                <input asp-for="Nombre" class="form-control" placeholder="Enter your name" />
+                                                <label class="fw-semibold">Nombre completo</label>
+                                                <input asp-for="Nombre" class="form-control" placeholder="Ingresa tu nombre completo" />
                                                 <span asp-validation-for="Nombre" class="text-danger"></span>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="fw-semibold">Fecha de nacimiento</label>
+                                                <input asp-for="FechaNacimiento" type="date" class="form-control" />
+                                                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="fw-semibold">Password</label>
-                                                <input asp-for="Clave" type="password" class="form-control" placeholder="Enter password" />
+                                                <label class="fw-semibold">Ciudad</label>
+                                                <input asp-for="Ciudad" class="form-control" placeholder="¿En qué ciudad vives?" />
+                                                <span asp-validation-for="Ciudad" class="text-danger"></span>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="fw-semibold">Género</label>
+                                                <select asp-for="Genero" class="form-select">
+                                                    <option value="">Selecciona una opción</option>
+                                                    <option value="Masculino">Masculino</option>
+                                                    <option value="Femenino">Femenino</option>
+                                                    <option value="Otro">Otro</option>
+                                                    <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                                                </select>
+                                                <span asp-validation-for="Genero" class="text-danger"></span>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="fw-semibold">Intereses</label>
+                                                <textarea asp-for="Intereses"
+                                                          class="form-control"
+                                                          rows="3"
+                                                          placeholder="Ej: Deportes, música, viajes, conversación, amistad..."></textarea>
+                                                <span asp-validation-for="Intereses" class="text-danger"></span>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="fw-semibold">Contraseña</label>
+                                                <input asp-for="Clave" type="password" class="form-control" placeholder="Crea una contraseña segura" />
                                                 <span asp-validation-for="Clave" class="text-danger"></span>
                                             </div>
 
                                             <div class="mt-4 text-end">
                                                 <button class="btn btn-primary w-md waves-effect waves-light" type="submit">
-                                                    Register
+                                                    Registrarme
                                                 </button>
                                             </div>
 
                                             <div class="mt-4 text-center">
                                                 <p class="mb-0 text-muted">
-                                                    By registering you agree to the Samply
+                                                    Al registrarte aceptas los
                                                     <a href="#" class="text-primary fw-semibold text-decoration-underline">
-                                                        Terms of Use
+                                                        Términos y Condiciones
                                                     </a>
+                                                    de ConociendoAmistades.cl
                                                 </p>
                                             </div>
                                         </form>
@@ -102,25 +130,26 @@
                             </div>
 
                             <div class="col-lg-6">
-                                <div class="p-lg-5 p-4 bg-auth h-100 d-none d-lg-block">
-                                    <div class="bg-overlay"></div>
-                                </div>
+                                <img src="~/assets/images/CA_CL_LOGO_V1.png"
+                                     class="img-fluid mx-auto d-block"
+                                     alt="Conociendo Amistades">
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-5 text-center">
                         <p>
-                            Already have an account ?
-                            <a href="@Url.Action("Login","Authentication")"
+                            ¿Ya tienes una cuenta?
+                            <a href="@Url.Action("Login", "Authentication")"
                                class="fw-semibold text-decoration-underline">
-                                Login
+                                Inicia sesión
                             </a>
                         </p>
                         <p>
                             © <script>document.write(new Date().getFullYear())</script>
-                            <b>Samply</b>. Crafted with
+                            <b>ConociendoAmistades.cl</b>. Hecho con
                             <i class="mdi mdi-heart text-danger"></i>
+                            en Chile
                         </p>
                     </div>
 

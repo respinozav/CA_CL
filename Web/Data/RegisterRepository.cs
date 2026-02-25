@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Data;
 using Web.Models;
 
@@ -17,7 +19,11 @@ namespace Web.Data
             string usuario,
             string clave,
             string nombre,
-            string email)
+            string email,
+            DateTime fechaNacimiento,
+            string ciudad,
+            string genero,
+            string intereses)
         {
             using var conn = new SqlConnection(
                 _config.GetConnectionString("DefaultConnection")
@@ -26,11 +32,14 @@ namespace Web.Data
             using var cmd = new SqlCommand("app.sp_RegistrarUsuario", conn);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            // Parámetros tipados (mejor práctica)
             cmd.Parameters.Add("@Usuario", SqlDbType.NVarChar, 50).Value = usuario;
             cmd.Parameters.Add("@Clave", SqlDbType.NVarChar, 200).Value = clave;
             cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar, 150).Value = nombre;
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 150).Value = email;
+            cmd.Parameters.Add("@FechaNacimiento", SqlDbType.Date).Value = fechaNacimiento;
+            cmd.Parameters.Add("@Ciudad", SqlDbType.NVarChar, 100).Value = ciudad;
+            cmd.Parameters.Add("@Genero", SqlDbType.NVarChar, 20).Value = genero;
+            cmd.Parameters.Add("@Intereses", SqlDbType.NVarChar, 500).Value = intereses ?? "";
 
             conn.Open();
 

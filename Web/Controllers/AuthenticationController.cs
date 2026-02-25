@@ -89,8 +89,8 @@ namespace Web.Controllers
         }
 
         /* =====================================================
-           REGISTRO
-        ===================================================== */
+    REGISTRO
+ ===================================================== */
 
         [HttpGet]
         public IActionResult Registretion()
@@ -105,11 +105,22 @@ namespace Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            // 🔞 Validar mayor de 18 años
+            if (!model.EsMayorDeEdad())
+            {
+                model.MensajeError = "Debes ser mayor de 18 años para registrarte.";
+                return View(model);
+            }
+
             var result = _registerRepo.RegistrarUsuario(
                 model.Usuario,
                 model.Clave,
                 model.Nombre,
-                model.Email
+                model.Email,
+                model.FechaNacimiento,
+                model.Ciudad,
+                model.Genero,
+                model.Intereses ?? ""
             );
 
             if (result == null || result.Codigo != "USER_CREATED_PENDING_CONFIRMATION")
