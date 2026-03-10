@@ -854,5 +854,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
+	<Target Name="PostPublish" AfterTargets="Publish">
+	  <Exec Command="powershell -ExecutionPolicy Bypass -File $(ProjectDir)deploy.ps1" />
+	</Target>
 </Project>
