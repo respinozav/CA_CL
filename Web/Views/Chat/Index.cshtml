@@ -1,0 +1,549 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewBag.Title = "Chat";
+    ViewBag.pTitle = "Chat";
+    ViewBag.pageTitle = "App";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var usuario = HttpContextAccessor.HttpContext.Session.GetString("Nombre") ?? "Usuario";
+}
+@section styles {
+
+    <style>
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 15px;
+            font-size: 14px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .mensaje-recibido {
+            background: #f1f1f1;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+
+        .mensaje-enviado {
+            background: #556ee6;
+            color: white;
+            border-bottom-right-radius: 5px;
+            margin-left: auto;
+        }
+
+        .mensaje-hora {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-left: 8px;
+        }
+
+        .chat-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .chat-row.enviado {
+            justify-content: flex-end;
+        }
+
+        #chatWindowsContainer {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .chat-window {
+            width: 260px;
+            height: 340px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: #556ee6;
+            color: white;
+            padding: 8px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .chat-input {
+            border-top: 1px solid #eee;
+            padding: 5px;
+        }
+
+            .chat-input input {
+                width: 100%;
+                border: none;
+                outline: none;
+                font-size: 13px;
+            }
+    </style>
+
+}
+<div class="d-lg-flex">
+
+    <!-- SIDEBAR -->
+    <div class="chat-leftsidebar card">
+
+        <div class="p-3 px-4 bg-light">
+            <div class="d-flex align-items-start">
+
+                <div class="flex-shrink-0 me-3">
+                    <img src="~/assets/images/users/avatar-4.jpg" class="avatar-xs rounded-circle">
+                </div>
+
+                <div class="flex-grow-1">
+                    <h5 class="font-size-16 mb-1">
+                        @usuario
+                        <i class="mdi mdi-circle text-success align-middle font-size-10 ms-1"></i>
+                    </h5>
+                    <p class="text-muted mb-0 font-size-12">Online</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="p-3">
+            <div class="search-box chat-search-box">
+                <div class="position-relative">
+                    <input type="text" class="form-control border-light rounded" placeholder="Buscar...">
+                    <i class="mdi mdi-magnify search-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-message-list p-4" data-simplebar>
+            <ul class="list-unstyled chat-list mb-0" id="listaUsuarios">
+            </ul>
+        </div>
+
+    </div>
+
+
+    <!-- CHAT -->
+    <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
+
+        <div class="card">
+
+            <!-- HEADER -->
+            <div class="p-3 px-lg-4 border-bottom">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="flex-shrink-0 me-3">
+                        <img src="~/assets/images/users/avatar-2.jpg" class="rounded-circle avatar-xs">
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <h5 class="font-size-16 mb-0">Chat General</h5>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MENSAJES -->
+            <div class="px-lg-2">
+
+                <div class="chat-conversation p-3" data-simplebar>
+
+                    <ul class="list-unstyled mb-0" id="listaMensajes">
+
+                        <li class="chat-day-title">
+                            <div class="title">Hoy</div>
+                        </li>
+
+                    </ul>
+
+                </div>
+                <div id="indicadorEscribiendo" class="text-muted font-size-12 mt-2" style="display:none;">
+
+                </div>
+            </div>
+
+
+            <!-- INPUT -->
+            <div class="p-3 chat-input-section">
+
+                <div class="row">
+
+                    <div class="col">
+
+                        <input id="mensajeInput"
+                               type="text"
+                               class="form-control chat-input rounded"
+                               placeholder="Escribe un mensaje...">
+
+                    </div>
+
+                    <div class="col-auto">
+
+                        <button id="btnEnviar"
+                                class="btn btn-primary chat-send w-md waves-effect waves-light">
+
+                            <span class="d-none d-sm-inline-block me-2">Enviar</span>
+                            <i class="mdi mdi-send"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<input type="hidden" id="usuarioActual" value="@usuario" />
+
+@section scripts {
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        const usuario = document.getElementById("usuarioActual").value;
+
+        let usuarioPrivado = null;
+        let ventanasChat = {};
+
+
+        // =============================
+        // RECIBIR MENSAJE GENERAL
+        // =============================
+        connection.on("RecibirMensaje", function (user, mensaje) {
+
+            const lista = document.getElementById("listaMensajes");
+
+            const hora = new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const li = document.createElement("li");
+
+            li.innerHTML = `
+                <div class="conversation-list d-flex">
+
+                    <div class="chat-user-img align-self-start">
+                        <img src="/assets/images/users/avatar-2.jpg"
+                             class="rounded-circle avatar-xs">
+                    </div>
+
+                    <div class="ctext-wrap">
+
+                        <div class="ctext-wrap-content">
+
+                            <p class="mb-0">
+                                <strong>${user}</strong> : ${mensaje}
+                                <span class="d-inline-block font-size-12 text-muted ms-3">${hora}</span>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+            lista.appendChild(li);
+            lista.scrollTop = lista.scrollHeight;
+
+        });
+
+
+        // =============================
+        // RECIBIR MENSAJE PRIVADO
+        // =============================
+        connection.on("RecibirMensajePrivado", function (de, para, mensaje) {
+
+            const otro = de === usuario ? para : de;
+
+            abrirVentanaChat(otro);
+
+            const lista = document.getElementById("mensajes-" + otro);
+
+            if (!lista) return;
+
+            const hora = new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const div = document.createElement("div");
+
+            let esMio = de === usuario;
+
+            if (esMio) {
+
+                div.className = "chat-row enviado";
+
+                div.innerHTML = `
+                    <div class="chat-bubble mensaje-enviado">
+                        ${mensaje}
+                        <span class="mensaje-hora">${hora}</span>
+                    </div>
+                `;
+
+            } else {
+
+                div.className = "chat-row";
+
+                div.innerHTML = `
+                    <div class="chat-bubble mensaje-recibido">
+                        ${mensaje}
+                        <span class="mensaje-hora">${hora}</span>
+                    </div>
+                `;
+
+                if (!ventanasChat[otro].abierta) {
+                    agregarNotificacion(otro, mensaje);
+                }
+
+            }
+
+            lista.appendChild(div);
+            lista.scrollTop = lista.scrollHeight;
+
+        });
+
+
+        // =============================
+        // USUARIOS CONECTADOS
+        // =============================
+        connection.on("UsuariosConectados", function (usuarios) {
+
+            const lista = document.getElementById("listaUsuarios");
+
+            lista.innerHTML = "";
+
+            usuarios.forEach(function (user) {
+
+                if (user === usuario)
+                    return;
+
+                const li = document.createElement("li");
+
+                li.innerHTML = `
+                    <a href="#" onclick="abrirVentanaChat('${user}')">
+                        <div class="d-flex align-items-start">
+
+                            <div class="flex-shrink-0 me-3">
+                                <img src="/assets/images/users/avatar-2.jpg"
+                                     class="rounded-circle avatar-xs">
+                            </div>
+
+                            <div class="flex-grow-1 overflow-hidden">
+                                <h5 class="text-truncate font-size-14 mb-1">
+                                    ${user}
+                                </h5>
+                                <p class="text-success font-size-12 mb-0">
+                                    Online
+                                </p>
+                            </div>
+
+                        </div>
+                    </a>
+                `;
+
+                lista.appendChild(li);
+
+            });
+
+        });
+
+
+        // =============================
+        // ABRIR VENTANA CHAT
+        // =============================
+        function abrirVentanaChat(user) {
+
+            if (!ventanasChat[user]) {
+
+                const container = document.getElementById("chatWindowsContainer");
+
+                const ventana = document.createElement("div");
+
+                ventana.className = "chat-window";
+
+                ventana.innerHTML = `
+                    <div class="chat-header">
+                        ${user}
+                        <span onclick="cerrarChat('${user}')" style="cursor:pointer;">✖</span>
+                    </div>
+
+                    <div class="chat-body" id="mensajes-${user}"></div>
+
+                    <div class="chat-input">
+                        <input type="text"
+                               id="input-${user}"
+                               placeholder="Escribe..."
+                               onkeypress="enterEnviar(event,'${user}')">
+                    </div>
+                `;
+
+                container.appendChild(ventana);
+
+                ventanasChat[user] = {
+                    abierta: true
+                };
+
+            } else {
+
+                ventanasChat[user].abierta = true;
+
+            }
+
+        }
+
+
+        // =============================
+        // CERRAR CHAT
+        // =============================
+        function cerrarChat(user){
+
+            const container = document.getElementById("chatWindowsContainer");
+
+            const ventanas = container.getElementsByClassName("chat-window");
+
+            for(let v of ventanas){
+
+                if(v.querySelector(".chat-header").innerText.includes(user)){
+                    v.remove();
+                }
+
+            }
+
+            delete ventanasChat[user];
+
+        }
+
+
+        // =============================
+        // ENTER ENVIAR
+        // =============================
+        function enterEnviar(e,user){
+
+            if(e.key === "Enter"){
+
+                const input = document.getElementById("input-"+user);
+
+                const mensaje = input.value;
+
+                if(mensaje.trim()==="")
+                    return;
+
+                connection.invoke("EnviarMensajePrivado", usuario, user, mensaje);
+
+                input.value="";
+
+            }
+
+        }
+
+
+        // =============================
+        // NOTIFICACION
+        // =============================
+        function agregarNotificacion(user,mensaje){
+
+            const box = document.createElement("div");
+
+            box.className="notificacion-chat";
+
+            box.innerHTML=`
+                <strong>${user}</strong><br>
+                ${mensaje}
+            `;
+
+            box.onclick=function(){
+                abrirVentanaChat(user);
+                box.remove();
+            }
+
+            document.body.appendChild(box);
+
+            setTimeout(()=>{
+                box.remove();
+            },5000)
+
+        }
+
+
+        // =============================
+        // INICIAR CONEXION
+        // =============================
+        connection.start().then(function () {
+
+            connection.invoke("RegistrarUsuario", usuario);
+
+        }).catch(function (err) {
+
+            console.error(err.toString());
+
+        });
+
+        // =============================
+        // ENVIAR MENSAJE GENERAL
+        // =============================
+
+        document.getElementById("btnEnviar")?.addEventListener("click", enviarMensajeGeneral);
+
+        document.getElementById("mensajeInput")?.addEventListener("keypress", function(e){
+
+            if(e.key === "Enter"){
+                enviarMensajeGeneral();
+            }
+
+        });
+
+        function enviarMensajeGeneral(){
+
+            const input = document.getElementById("mensajeInput");
+
+            if(!input) return;
+
+            const mensaje = input.value;
+
+            if(mensaje.trim()==="")
+                return;
+
+            connection.invoke("EnviarMensaje", usuario, mensaje);
+
+            input.value="";
+        }
+
+    </script>
+
+}

@@ -1,11 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Web.Data;
+using Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC
 builder.Services.AddControllersWithViews();
 
+//SignalR
+builder.Services.AddSignalR();
+
+builder.Services.AddHttpContextAccessor();
 // DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
@@ -50,5 +55,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Authentication}/{action=Login}/{id?}");
+
+// HUB CHAT
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

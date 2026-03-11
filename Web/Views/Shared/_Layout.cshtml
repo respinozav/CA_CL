@@ -6,6 +6,7 @@
     @RenderSection("styles", required: false)
     @await Html.PartialAsync("~/Views/Shared/_head_css.cshtml")
 </head>
+
 <body data-sidebar="dark">
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -27,6 +28,7 @@
         </div>
 
     </div>
+    <div id="chatWindowsContainer"></div>
     <!-- END layout-wrapper -->
     @await Html.PartialAsync("~/Views/Shared/_rightsidebar.cshtml")
 
