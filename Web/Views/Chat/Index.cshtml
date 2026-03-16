@@ -82,23 +82,70 @@
         }
 
         .chat-body {
-            flex: 1;
+            flex: 1 1 auto;
             overflow-y: auto;
             padding: 10px;
             font-size: 13px;
+            min-height: 0;
         }
 
         .chat-input {
             border-top: 1px solid #eee;
-            padding: 5px;
+            padding: 6px;
+            flex-shrink: 0;
         }
 
-            .chat-input input {
-                width: 100%;
-                border: none;
-                outline: none;
-                font-size: 13px;
-            }
+        .chat-input input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .chat-window.minimizada {
+            height: 38px;
+        }
+
+        .chat-window.minimizada .chat-body,
+        .chat-window.minimizada .chat-input {
+            display: none;
+        }
+
+        .chat-header .chat-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .chat-header span {
+            cursor: pointer;
+        }
+
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            background: #34c38f;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid white;
+        }
+
+        .estado {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .online {
+            background: #34c38f;
+        }
+
+        .offline {
+            background: #6c757d;
+        }
     </style>
 
 }
@@ -106,14 +153,11 @@
 
     <!-- SIDEBAR -->
     <div class="chat-leftsidebar card">
-
         <div class="p-3 px-4 bg-light">
             <div class="d-flex align-items-start">
-
                 <div class="flex-shrink-0 me-3">
                     <img src="~/assets/images/users/avatar-4.jpg" class="avatar-xs rounded-circle">
                 </div>
-
                 <div class="flex-grow-1">
                     <h5 class="font-size-16 mb-1">
                         @usuario
@@ -121,15 +165,21 @@
                     </h5>
                     <p class="text-muted mb-0 font-size-12">Online</p>
                 </div>
-
             </div>
         </div>
 
         <div class="p-3">
             <div class="search-box chat-search-box">
                 <div class="position-relative">
-                    <input type="text" class="form-control border-light rounded" placeholder="Buscar...">
+
+                    <input type="text"
+                           id="buscarUsuario"
+                           class="form-control border-light rounded"
+                           placeholder="Buscar..."
+                           onkeyup="filtrarUsuarios()">
+
                     <i class="mdi mdi-magnify search-icon"></i>
+
                 </div>
             </div>
         </div>
@@ -237,7 +287,9 @@
 
         let usuarioPrivado = null;
         let ventanasChat = {};
-
+        const MAX_CHATS = 4;
+        let ordenChats = [];
+        let usuariosOnline = [];
 
         // =============================
         // RECIBIR MENSAJE GENERAL
@@ -252,6 +304,7 @@
             });
 
             const li = document.createElement("li");
+            li.setAttribute("data-user", user);
 
             li.innerHTML = `
                 <div class="conversation-list d-flex">
@@ -344,6 +397,8 @@
         // =============================
         connection.on("UsuariosConectados", function (usuarios) {
 
+            usuariosOnline = usuarios;
+
             const lista = document.getElementById("listaUsuarios");
 
             lista.innerHTML = "";
@@ -356,30 +411,33 @@
                 const li = document.createElement("li");
 
                 li.innerHTML = `
-                    <a href="#" onclick="abrirVentanaChat('${user}')">
-                        <div class="d-flex align-items-start">
+                <a href="#" onclick="abrirVentanaChat('${user}')">
+                    <div class="d-flex align-items-start">
 
-                            <div class="flex-shrink-0 me-3">
-                                <img src="/assets/images/users/avatar-2.jpg"
-                                     class="rounded-circle avatar-xs">
-                            </div>
-
-                            <div class="flex-grow-1 overflow-hidden">
-                                <h5 class="text-truncate font-size-14 mb-1">
-                                    ${user}
-                                </h5>
-                                <p class="text-success font-size-12 mb-0">
-                                    Online
-                                </p>
-                            </div>
-
+                        <div class="flex-shrink-0 me-3">
+                            <img src="/assets/images/users/avatar-2.jpg"
+                                 class="rounded-circle avatar-xs">
                         </div>
-                    </a>
+
+                        <div class="flex-grow-1 overflow-hidden">
+                            <h5 class="text-truncate font-size-14 mb-1">
+                                ${user}
+                            </h5>
+
+                            <p class="text-success font-size-12 mb-0">
+                                Online
+                            </p>
+                        </div>
+
+                    </div>
+                </a>
                 `;
 
                 lista.appendChild(li);
 
             });
+
+            actualizarEstadoChats();
 
         });
 
@@ -391,26 +449,45 @@
 
             if (!ventanasChat[user]) {
 
+                if (ordenChats.length >= MAX_CHATS) {
+
+                    const cerrar = ordenChats.shift();
+
+                    cerrarChat(cerrar);
+
+                }
+
                 const container = document.getElementById("chatWindowsContainer");
 
                 const ventana = document.createElement("div");
 
                 ventana.className = "chat-window";
+                ventana.dataset.user = user;
 
                 ventana.innerHTML = `
-                    <div class="chat-header">
+                <div class="chat-header" data-user="${user}">
+
+                    <span class="estado"></span>
+
+                    <span class="nombre" onclick="toggleChat('${user}')">
                         ${user}
-                        <span onclick="cerrarChat('${user}')" style="cursor:pointer;">✖</span>
+                    </span>
+
+                    <div class="chat-controls">
+                        <span onclick="minimizarChat('${user}')">—</span>
+                        <span onclick="cerrarChat('${user}')">✖</span>
                     </div>
 
-                    <div class="chat-body" id="mensajes-${user}"></div>
+                </div>
 
-                    <div class="chat-input">
-                        <input type="text"
-                               id="input-${user}"
-                               placeholder="Escribe..."
-                               onkeypress="enterEnviar(event,'${user}')">
-                    </div>
+                <div class="chat-body" id="mensajes-${user}"></div>
+
+                <div class="chat-input">
+                    <input type="text"
+                        id="input-${user}"
+                        placeholder="Escribe..."
+                        onkeypress="enterEnviar(event,'${user}')">
+                </div>
                 `;
 
                 container.appendChild(ventana);
@@ -419,6 +496,8 @@
                     abierta: true
                 };
 
+                ordenChats.push(user);
+                actualizarEstadoUsuario(user);
             } else {
 
                 ventanasChat[user].abierta = true;
@@ -433,19 +512,15 @@
         // =============================
         function cerrarChat(user){
 
-            const container = document.getElementById("chatWindowsContainer");
+            const ventana = document.querySelector(`.chat-window[data-user='${user}']`);
 
-            const ventanas = container.getElementsByClassName("chat-window");
-
-            for(let v of ventanas){
-
-                if(v.querySelector(".chat-header").innerText.includes(user)){
-                    v.remove();
-                }
-
+            if(ventana){
+                ventana.remove();
             }
 
             delete ventanasChat[user];
+
+            ordenChats = ordenChats.filter(u => u !== user);
 
         }
 
@@ -457,6 +532,10 @@
 
             if(e.key === "Enter"){
 
+                if(!usuariosOnline.includes(user)){
+                    alert("El usuario está fuera de línea");
+                return;
+        }
                 const input = document.getElementById("input-"+user);
 
                 const mensaje = input.value;
@@ -517,33 +596,99 @@
         // =============================
         // ENVIAR MENSAJE GENERAL
         // =============================
-
         document.getElementById("btnEnviar")?.addEventListener("click", enviarMensajeGeneral);
-
         document.getElementById("mensajeInput")?.addEventListener("keypress", function(e){
-
             if(e.key === "Enter"){
                 enviarMensajeGeneral();
             }
-
         });
 
         function enviarMensajeGeneral(){
-
             const input = document.getElementById("mensajeInput");
-
             if(!input) return;
-
             const mensaje = input.value;
-
             if(mensaje.trim()==="")
                 return;
-
             connection.invoke("EnviarMensaje", usuario, mensaje);
-
             input.value="";
         }
 
-    </script>
+        function minimizarChat(user){
+            const ventana = document.querySelector(`.chat-window[data-user='${user}']`);
+            if(!ventana) return;
+            ventana.classList.toggle("minimizada");
+            ventanasChat[user].abierta = !ventana.classList.contains("minimizada");
+        }
 
+        function toggleChat(user){
+            const ventana = document.querySelector(`.chat-window[data-user='${user}']`);
+            if(!ventana) return;
+            if(ventana.classList.contains("minimizada")){
+                ventana.classList.remove("minimizada");
+                ventanasChat[user].abierta = true;
+            }
+        }
+        function actualizarEstadoChats(){
+            for(let user in ventanasChat){
+                const input = document.getElementById("input-"+user);
+                const estado = document.querySelector(
+                    `.chat-header[data-user='${user}'] .estado`
+                );
+                if(!usuariosOnline.includes(user)){
+                    input.disabled = true;
+                    input.placeholder = "Usuario fuera de línea";
+                    estado.classList.remove("online");
+                    estado.classList.add("offline");
+                }else{
+                    input.disabled = false;
+                    input.placeholder = "Escribe...";
+                    estado.classList.remove("offline");
+                    estado.classList.add("online");
+                }
+            }
+        }
+        function actualizarEstadoUsuario(user){
+            const estado = document.querySelector(
+                `.chat-header[data-user='${user}'] .estado`
+            );
+            if(!estado) return;
+            if(usuariosOnline.includes(user)){
+                estado.classList.remove("offline");
+                estado.classList.add("online");
+            }else{
+                estado.classList.remove("online");
+                estado.classList.add("offline");
+            }
+        }
+         function filtrarUsuarios(){
+            const texto = document
+                .getElementById("buscarUsuario")
+                .value
+                .toLowerCase();
+            const usuarios = document.querySelectorAll("#listaUsuarios li");
+            usuarios.forEach(function(li){
+                const nombre = li.getAttribute("data-user").toLowerCase();
+                if(nombre.includes(texto)){
+                    li.style.display = "";
+                }else{
+                    li.style.display = "none";
+                }
+            });
+        }
+        function filtrarUsuarios(){
+            const texto = document
+                .getElementById("buscarUsuario")
+                .value
+                .toLowerCase();
+            const usuarios = document.querySelectorAll("#listaUsuarios li");
+            usuarios.forEach(function(li){
+                const nombre = li.getAttribute("data-user").toLowerCase();
+                if(nombre.includes(texto)){
+                    li.style.display = "";
+                }else{
+                    li.style.display = "none";
+                }
+            });
+        }
+    </script>
 }
