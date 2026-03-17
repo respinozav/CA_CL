@@ -1,23 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Web.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using Web.Data;
 using Web.Filters;
+using Web.Models;
+
 
 namespace Web.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly UsuarioRepository _usuarioRepository;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(
+            ILogger<HomeController> logger,
+            UsuarioRepository usuarioRepository)
         {
             _logger = logger;
+            _usuarioRepository = usuarioRepository;
         }
+
         [MenuAuthorize]
         public IActionResult Index()
         {
-            return View();
+            var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
+
+            if (string.IsNullOrEmpty(usuarioIdString))
+                return RedirectToAction("Login", "Authentication");
+
+            var usuarioId = Guid.Parse(usuarioIdString);
+
+            var usuario = _usuarioRepository.ObtenerUsuario(usuarioId);
+
+            return View(usuario);
         }
+
         [MenuAuthorize]
         public IActionResult RegistroFinal()
         {
@@ -36,3 +54,4 @@ namespace Web.Controllers
         }
     }
 }
+

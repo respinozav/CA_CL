@@ -25,8 +25,7 @@ namespace Web.Models
         public DateTime FechaNacimiento { get; set; }
 
         [Required(ErrorMessage = "La ciudad es obligatoria")]
-        [StringLength(100)]
-        public string Ciudad { get; set; } = string.Empty;
+        public Guid? CiudadId { get; set; } 
 
         [Required(ErrorMessage = "Selecciona un género")]
         public string Genero { get; set; } = string.Empty;
@@ -36,6 +35,8 @@ namespace Web.Models
 
         public string? MensajeError { get; set; }
         public string? MensajeOk { get; set; }
+
+        public List<CiudadDto> Ciudades { get; set; } = new List<CiudadDto>();
 
         // Validación automática +18
         public bool EsMayorDeEdad()

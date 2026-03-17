@@ -21,7 +21,7 @@ namespace Web.Data
             string nombre,
             string email,
             DateTime fechaNacimiento,
-            string ciudad,
+            Guid ciudadId,
             string genero,
             string intereses)
         {
@@ -37,7 +37,7 @@ namespace Web.Data
             cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar, 150).Value = nombre;
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 150).Value = email;
             cmd.Parameters.Add("@FechaNacimiento", SqlDbType.Date).Value = fechaNacimiento;
-            cmd.Parameters.Add("@Ciudad", SqlDbType.NVarChar, 100).Value = ciudad;
+            cmd.Parameters.Add("@CiudadId", SqlDbType.UniqueIdentifier).Value = ciudadId;
             cmd.Parameters.Add("@Genero", SqlDbType.NVarChar, 20).Value = genero;
             cmd.Parameters.Add("@Intereses", SqlDbType.NVarChar, 500).Value = intereses ?? "";
 
@@ -90,6 +90,32 @@ namespace Web.Data
                 Codigo = "INVALID_OR_EXPIRED_TOKEN",
                 Descripcion = "El enlace no es válido o ha expirado."
             };
+        }
+        public List<CiudadDto> ListarCiudades()
+        {
+            var lista = new List<CiudadDto>();
+
+            using var conn = new SqlConnection(
+                _config.GetConnectionString("DefaultConnection")
+            );
+
+            using var cmd = new SqlCommand("app.sp_ListCiudades", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            conn.Open();
+
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new CiudadDto
+                {
+                    CiudadId = Guid.Parse(reader["CiudadId"].ToString()),
+                    Nombre = reader["NombreCiudad"].ToString()
+                });
+            }
+
+            return lista;
         }
     }
 }

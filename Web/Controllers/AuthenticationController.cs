@@ -89,26 +89,35 @@ namespace Web.Controllers
         }
 
         /* =====================================================
-    REGISTRO
- ===================================================== */
+            REGISTRO
+         ===================================================== */
 
         [HttpGet]
-        public IActionResult Registretion()
+        public IActionResult Register()
         {
-            return View(new RegisterViewModel());
+            var model = new RegisterViewModel();
+
+            model.Ciudades = _registerRepo.ListarCiudades();
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Registretion(RegisterViewModel model)
+        public IActionResult Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                model.Ciudades = _registerRepo.ListarCiudades();
                 return View(model);
+            }
 
             // 🔞 Validar mayor de 18 años
             if (!model.EsMayorDeEdad())
             {
                 model.MensajeError = "Debes ser mayor de 18 años para registrarte.";
+
+                model.Ciudades = _registerRepo.ListarCiudades();
                 return View(model);
             }
 
@@ -118,7 +127,7 @@ namespace Web.Controllers
                 model.Nombre,
                 model.Email,
                 model.FechaNacimiento,
-                model.Ciudad,
+                model.CiudadId,
                 model.Genero,
                 model.Intereses ?? ""
             );
@@ -126,15 +135,18 @@ namespace Web.Controllers
             if (result == null || result.Codigo != "USER_CREATED_PENDING_CONFIRMATION")
             {
                 model.MensajeError = result?.Descripcion ?? "No fue posible registrar el usuario.";
+
+                model.Ciudades = _registerRepo.ListarCiudades();
                 return View(model);
             }
 
             ModelState.Clear();
 
-            return View(new RegisterViewModel
-            {
-                MensajeOk = "Revisa tu correo para confirmar tu cuenta antes de iniciar sesión."
-            });
+            var nuevoModelo = new RegisterViewModel();
+            nuevoModelo.Ciudades = _registerRepo.ListarCiudades();
+            nuevoModelo.MensajeOk = "Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.";
+
+            return View(nuevoModelo);
         }
 
         /* =====================================================

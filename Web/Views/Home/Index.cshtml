@@ -1,8 +1,82 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model Web.Models.UsuarioViewModel
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Mi Perfil</h5>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="GuardarPerfil" method="post">
+
+                <div class="row">
+
+                    <!-- USUARIO -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Usuario</label>
+                        <input asp-for="Usuario" class="form-control" />
+                    </div>
+
+                    <!-- NOMBRE -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input asp-for="Nombre" class="form-control" />
+                    </div>
+
+                    <!-- FECHA NACIMIENTO -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Fecha de nacimiento</label>
+                        <input asp-for="FechaNacimiento" type="date" class="form-control" />
+                    </div>
+
+                    <!-- CIUDAD -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Ciudad</label>
+                        <input asp-for="Ciudad" class="form-control" />
+                    </div>
+
+                    <!-- GENERO -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Género</label>
+                        <select asp-for="Genero" class="form-select">
+                            <option value="">Seleccione</option>
+                            <option>Hombre</option>
+                            <option>Mujer</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+
+                    <!-- INTERESES -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Intereses</label>
+                        <input asp-for="Intereses" class="form-control" />
+                    </div>
+
+                    <!-- EMAIL (NO EDITABLE) -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input asp-for="Email" class="form-control" readonly />
+                    </div>
+
+                    <!-- FECHA CREACION (NO EDITABLE) -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Fecha creación</label>
+                        <input asp-for="FechaCreacion" class="form-control" readonly />
+                    </div>
+
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
 </div>
