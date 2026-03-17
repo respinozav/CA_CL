@@ -87,26 +87,26 @@ namespace Web.Controllers
         [MenuAuthorize]
         public IActionResult CambiodeClave(CambioClaveViewModel model)
         {
-            var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
-
-            if (string.IsNullOrEmpty(usuarioIdString))
-                return RedirectToAction("Login", "Authentication");
-
-            // 🔴 Validación
-            if (model.NuevaClave != model.ConfirmarClave)
+            // ❌ VALIDACIONES BACKEND
+            if (string.IsNullOrWhiteSpace(model.NuevaClave) ||
+                string.IsNullOrWhiteSpace(model.ConfirmarClave))
             {
-                ModelState.AddModelError("", "Las claves no coinciden");
+                ModelState.AddModelError("", "Todos los campos son obligatorios.");
                 return View(model);
             }
 
-            var usuarioId = Guid.Parse(usuarioIdString);
+            if (model.NuevaClave != model.ConfirmarClave)
+            {
+                ModelState.AddModelError("", "Las contraseñas no coinciden.");
+                return View(model);
+            }
 
-            // ⚠️ AQUÍ puedes hashear (recomendado)
-            var claveFinal = model.NuevaClave;
+            // ✅ SI TODO OK → LLAMAR REPO
+            var usuarioId = Guid.Parse(User.FindFirst("UsuarioId").Value);
 
-            var result = _usuarioRepository.ActualizarClave(usuarioId, claveFinal);
+            var resultado = _usuarioRepository.ActualizarClave(usuarioId, model.NuevaClave);
 
-            TempData["Mensaje"] = result.Descripcion;
+            TempData["Mensaje"] = "Clave actualizada correctamente";
 
             return RedirectToAction("CambiodeClave");
         }

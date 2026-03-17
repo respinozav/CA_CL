@@ -8,23 +8,37 @@
         </div>
 
         <div class="card-body">
-
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            }
             <form asp-action="CambiodeClave" method="post">
 
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Nueva clave</label>
-                        <input asp-for="NuevaClave" type="password" class="form-control" />
+                        <input asp-for="NuevaClave" id="NuevaClave" type="password" class="form-control" />
+                        <div class="invalid-feedback">
+                            Debes ingresar una clave.
+                        </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Confirmar clave</label>
-                        <input asp-for="ConfirmarClave" type="password" class="form-control" />
+                        <input asp-for="ConfirmarClave" id="ConfirmarClave" type="password" class="form-control" />
+                        <div class="invalid-feedback">
+                            Las contraseñas no coinciden.
+                        </div>
                     </div>
 
                 </div>
-
+                <div id="errorClave" class="text-danger mb-3" style="display:none;"></div>
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">
                         Guardar clave
@@ -49,10 +63,12 @@
         </div>
     </div>
 </div>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
+        // =========================
+        // 🔥 TOAST
+        // =========================
         var mensaje = '@TempData["Mensaje"]';
 
         if (mensaje && mensaje !== '') {
@@ -60,6 +76,56 @@
             var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
             toast.show();
         }
+
+        // =========================
+        // 🔐 VALIDACIÓN
+        // =========================
+        const form = document.querySelector("form");
+        const clave = document.getElementById("NuevaClave");
+        const confirmar = document.getElementById("ConfirmarClave");
+
+        function validar() {
+
+            let valido = true;
+
+            // reset
+            clave.classList.remove("is-invalid");
+            confirmar.classList.remove("is-invalid");
+
+            // ❌ vacío
+            if (!clave.value) {
+                clave.classList.add("is-invalid");
+                valido = false;
+            }
+
+            if (!confirmar.value) {
+                confirmar.classList.add("is-invalid");
+                valido = false;
+            }
+
+            // ❌ no coinciden
+            if (clave.value && confirmar.value && clave.value !== confirmar.value) {
+                confirmar.classList.add("is-invalid");
+                valido = false;
+            }
+
+            return valido;
+        }
+
+        // 🔥 TIEMPO REAL
+        clave.addEventListener("input", validar);
+        confirmar.addEventListener("input", validar);
+
+        // 🔥 BLOQUEO REAL
+        form.addEventListener("submit", function (e) {
+
+            if (!validar()) {
+                e.preventDefault();
+                e.stopPropagation(); // 🔥 clave para bloquear completamente
+                return false;
+            }
+
+        });
 
     });
 </script>
