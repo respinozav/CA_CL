@@ -25,7 +25,7 @@ namespace Web.Models
         public DateTime FechaNacimiento { get; set; }
 
         [Required(ErrorMessage = "La ciudad es obligatoria")]
-        public Guid? CiudadId { get; set; } 
+        public Guid CiudadId { get; set; } 
 
         [Required(ErrorMessage = "Selecciona un género")]
         public string Genero { get; set; } = string.Empty;
