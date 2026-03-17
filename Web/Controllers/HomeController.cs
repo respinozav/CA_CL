@@ -102,7 +102,12 @@ namespace Web.Controllers
             }
 
             // ✅ SI TODO OK → LLAMAR REPO
-            var usuarioId = Guid.Parse(User.FindFirst("UsuarioId").Value);
+            var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
+
+            if (string.IsNullOrEmpty(usuarioIdString))
+                return RedirectToAction("Login", "Authentication");
+
+            var usuarioId = Guid.Parse(usuarioIdString);
 
             var resultado = _usuarioRepository.ActualizarClave(usuarioId, model.NuevaClave);
 
