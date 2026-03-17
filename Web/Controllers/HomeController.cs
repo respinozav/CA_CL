@@ -80,7 +80,35 @@ namespace Web.Controllers
         [MenuAuthorize]
         public IActionResult CambiodeClave()
         {
-            return View();
+            return View(new CambioClaveViewModel());
+        }
+
+        [HttpPost]
+        [MenuAuthorize]
+        public IActionResult CambiodeClave(CambioClaveViewModel model)
+        {
+            var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
+
+            if (string.IsNullOrEmpty(usuarioIdString))
+                return RedirectToAction("Login", "Authentication");
+
+            // 🔴 Validación
+            if (model.NuevaClave != model.ConfirmarClave)
+            {
+                ModelState.AddModelError("", "Las claves no coinciden");
+                return View(model);
+            }
+
+            var usuarioId = Guid.Parse(usuarioIdString);
+
+            // ⚠️ AQUÍ puedes hashear (recomendado)
+            var claveFinal = model.NuevaClave;
+
+            var result = _usuarioRepository.ActualizarClave(usuarioId, claveFinal);
+
+            TempData["Mensaje"] = result.Descripcion;
+
+            return RedirectToAction("CambiodeClave");
         }
         public IActionResult Privacy()
         {

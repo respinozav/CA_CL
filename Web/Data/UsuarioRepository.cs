@@ -75,5 +75,29 @@ namespace Web.Data
 
             return ("ERROR", "No se pudo actualizar");
         }
+        public (string Codigo, string Descripcion) ActualizarClave(Guid usuarioId, string clave)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            using var cmd = new SqlCommand("app.sp_ActualizarClave", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
+            cmd.Parameters.AddWithValue("@Clave", clave);
+
+            conn.Open();
+
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                return (
+                    reader["Codigo"].ToString(),
+                    reader["Descripcion"].ToString()
+                );
+            }
+
+            return ("ERROR", "No se pudo actualizar la clave");
+        }
     }
 }
