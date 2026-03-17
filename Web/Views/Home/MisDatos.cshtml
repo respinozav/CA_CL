@@ -1,10 +1,10 @@
-﻿@model Web.Models.UsuarioViewModel
+﻿@model Web.Models.MisDatosViewModel
 
 <div class="container mt-4">
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Mi Perfil</h5>
+            <h5 class="mb-0">Mis Datos</h5>
         </div>
 
         <div class="card-body">
@@ -16,54 +16,64 @@
                     <!-- USUARIO -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Usuario</label>
-                        <input asp-for="Usuario" class="form-control" />
+                        <input asp-for="Usuario.Usuario" class="form-control" />
                     </div>
 
                     <!-- NOMBRE -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Nombre</label>
-                        <input asp-for="Nombre" class="form-control" />
+                        <input asp-for="Usuario.Nombre" class="form-control" />
                     </div>
 
                     <!-- FECHA NACIMIENTO -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Fecha de nacimiento</label>
-                        <input asp-for="FechaNacimiento" type="date" class="form-control" />
+                        <input asp-for="Usuario.FechaNacimiento" type="date" class="form-control" readonly />
                     </div>
 
-                    <!-- CIUDAD -->
+                    <!-- CIUDAD (🔥 CAMBIO IMPORTANTE) -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Ciudad</label>
-                        <input asp-for="Ciudad" class="form-control" />
+                        <select asp-for="Usuario.CiudadId" class="form-select">
+                            <option value="">Seleccione</option>
+
+                            @foreach (var c in Model.Ciudades)
+                            {
+                                <option value="@c.CiudadId">@c.Nombre</option>
+                            }
+                        </select>
                     </div>
 
                     <!-- GENERO -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Género</label>
-                        <select asp-for="Genero" class="form-select">
+                        <select asp-for="Usuario.GeneroId" class="form-select">
                             <option value="">Seleccione</option>
-                            <option>Hombre</option>
-                            <option>Mujer</option>
-                            <option>Otro</option>
+                            @foreach (var g in Model.Generos)
+                            {
+                                <option value="@g.GeneroId">
+                                    @g.NombreGenero
+                                </option>
+                            }
                         </select>
                     </div>
 
                     <!-- INTERESES -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Intereses</label>
-                        <input asp-for="Intereses" class="form-control" />
+                        <input asp-for="Usuario.Intereses" class="form-control" />
                     </div>
 
                     <!-- EMAIL (NO EDITABLE) -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" readonly />
+                        <input asp-for="Usuario.Email" class="form-control" readonly />
                     </div>
 
                     <!-- FECHA CREACION (NO EDITABLE) -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Fecha creación</label>
-                        <input asp-for="FechaCreacion" class="form-control" readonly />
+                        <input asp-for="Usuario.FechaCreacion" class="form-control" readonly />
                     </div>
 
                 </div>
@@ -80,3 +90,26 @@
     </div>
 
 </div>
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+    <div id="toastSuccess" class="toast align-items-center text-bg-success border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                ✔ @TempData["Mensaje"]
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var mensaje = '@TempData["Mensaje"]';
+
+        if (mensaje && mensaje !== '') {
+            var toastEl = document.getElementById('toastSuccess');
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+    });
+</script>

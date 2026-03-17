@@ -10,7 +10,6 @@ namespace Web.Controllers
         private readonly LoginRepository _loginRepo;
         private readonly MenuRepository _menuRepo;
         private readonly RegisterRepository _registerRepo;
-
         public AuthenticationController(
             LoginRepository loginRepo,
             MenuRepository menuRepo,

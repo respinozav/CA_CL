@@ -11,14 +11,20 @@ namespace Web.Controllers
     public class HomeController : Controller
     {
         private readonly UsuarioRepository _usuarioRepository;
+        private readonly CiudadesRepository _ciudadesRepository;
         private readonly ILogger<HomeController> _logger;
+        private readonly GenerosRepository _generosRepository;
 
         public HomeController(
             ILogger<HomeController> logger,
-            UsuarioRepository usuarioRepository)
+            UsuarioRepository usuarioRepository,
+            CiudadesRepository ciudadesRepository,
+            GenerosRepository generosRepository)
         {
             _logger = logger;
             _usuarioRepository = usuarioRepository;
+            _ciudadesRepository = ciudadesRepository;
+            _generosRepository = generosRepository;
         }
 
         [MenuAuthorize]
@@ -33,9 +39,39 @@ namespace Web.Controllers
 
             var usuario = _usuarioRepository.ObtenerUsuario(usuarioId);
 
-            return View(usuario);
-        }
+            // 👇 Crear el ViewModel limpio
+            var vm = new MisDatosViewModel
+            {
+                Usuario = usuario,
+                Ciudades = _ciudadesRepository.ListarCiudades(),
+                Generos = _generosRepository.ListarGeneros()
+            };
 
+            return View(vm);
+        }
+        [HttpPost]
+        [MenuAuthorize]
+        public IActionResult GuardarPerfil(MisDatosViewModel model)
+        {
+            var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
+
+            if (string.IsNullOrEmpty(usuarioIdString))
+                return RedirectToAction("Login", "Authentication");
+
+            var usuarioId = Guid.Parse(usuarioIdString);
+
+            var result = _usuarioRepository.ActualizarUsuario(
+                usuarioId,
+                model.Usuario.Nombre,
+                model.Usuario.CiudadId,
+                model.Usuario.GeneroId,
+                model.Usuario.Intereses
+            );
+
+            TempData["Mensaje"] = result.Descripcion;
+
+            return RedirectToAction("MisDatos");
+        }
         [MenuAuthorize]
         public IActionResult Pago()
         {

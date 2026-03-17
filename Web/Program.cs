@@ -23,7 +23,8 @@ builder.Services.AddScoped<LoginRepository>();
 builder.Services.AddScoped<MenuRepository>();
 builder.Services.AddScoped<RegisterRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
-
+builder.Services.AddScoped<CiudadesRepository>();
+builder.Services.AddScoped<GenerosRepository>();
 // 🧠 SESSION (LA USAMOS EN LOGIN)
 builder.Services.AddSession(options =>
 {
