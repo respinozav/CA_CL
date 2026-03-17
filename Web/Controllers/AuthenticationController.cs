@@ -85,7 +85,7 @@ namespace Web.Controllers
                 JsonSerializer.Serialize(menuJerarquico)
             );
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("MisDatos", "Home");
         }
 
         /* =====================================================
@@ -106,6 +106,7 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(RegisterViewModel model)
         {
+            // Validar modelo
             if (!ModelState.IsValid)
             {
                 model.Ciudades = _registerRepo.ListarCiudades();
@@ -116,18 +117,26 @@ namespace Web.Controllers
             if (!model.EsMayorDeEdad())
             {
                 model.MensajeError = "Debes ser mayor de 18 años para registrarte.";
-
                 model.Ciudades = _registerRepo.ListarCiudades();
                 return View(model);
             }
 
+            // ✅ Validar que se haya seleccionado una ciudad
+            if (model.CiudadId == Guid.Empty)
+            {
+                model.MensajeError = "Debes seleccionar una ciudad.";
+                model.Ciudades = _registerRepo.ListarCiudades();
+                return View(model);
+            }
+
+            // Registrar usuario
             var result = _registerRepo.RegistrarUsuario(
                 model.Usuario,
                 model.Clave,
                 model.Nombre,
                 model.Email,
                 model.FechaNacimiento,
-                model.CiudadId,
+                model.CiudadId,   // Nunca null ahora
                 model.Genero,
                 model.Intereses ?? ""
             );
@@ -135,7 +144,6 @@ namespace Web.Controllers
             if (result == null || result.Codigo != "USER_CREATED_PENDING_CONFIRMATION")
             {
                 model.MensajeError = result?.Descripcion ?? "No fue posible registrar el usuario.";
-
                 model.Ciudades = _registerRepo.ListarCiudades();
                 return View(model);
             }

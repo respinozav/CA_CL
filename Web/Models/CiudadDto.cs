@@ -6,7 +6,6 @@ namespace Web.Models
     {
         public Guid CiudadId { get; set; }
 
-        [Required(ErrorMessage = "La ciudad es obligatoria")]
         public string Nombre { get; set; } = string.Empty;
     }
 }

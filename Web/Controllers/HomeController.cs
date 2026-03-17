@@ -22,7 +22,7 @@ namespace Web.Controllers
         }
 
         [MenuAuthorize]
-        public IActionResult Index()
+        public IActionResult MisDatos()
         {
             var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
 
@@ -37,11 +37,15 @@ namespace Web.Controllers
         }
 
         [MenuAuthorize]
-        public IActionResult RegistroFinal()
+        public IActionResult Pago()
         {
             return View();
         }
-
+        [MenuAuthorize]
+        public IActionResult CambiodeClave()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();

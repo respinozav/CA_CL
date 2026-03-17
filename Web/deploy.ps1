@@ -7,11 +7,11 @@ Write-Host "==============================="
 Write-Host ""
 
 # ---------- CONFIG ----------
-$key = "C:\Users\roder\OneDrive\Documentos\conociendoamistades.cl\keys\ubuntu-2\LightsailDefaultKey-us-east-1.pem"
+$key = "C:\Proyectos\conociendoamistades.cl\keys\ubuntu-2\LightsailDefaultKey-us-east-1.pem"
 $server = "ubuntu@98.87.29.132"
-$remotePath = "/var/www/ca_cl"
-$localPath = "C:\Users\roder\OneDrive\Documentos\conociendoamistades.cl\app\v1\CA_CL\Web\bin\Release\net8.0\publish"
-$service = "ca_cl"
+$remotePublishDir = "/home/ubuntu/ca_cl_publish"
+$localPath = "C:\Proyectos\conociendoamistades.cl\app\v1\CA_CL\Web\bin\Release\net8.0\publish"
+$remoteScript = "/home/ubuntu/sh/publicar.sh"
 
 # ---------- VALIDAR PUBLICACION ----------
 if (!(Test-Path $localPath)) {
@@ -20,14 +20,9 @@ if (!(Test-Path $localPath)) {
     exit
 }
 
-# ---------- LIMPIAR SERVIDOR ----------
-Write-Host "Eliminando archivos antiguos..."
-ssh -i "$key" "$server" "sudo rm -rf $remotePath/*"
-
 # ---------- SUBIR ARCHIVOS ----------
-Write-Host "Subiendo nueva version..."
-
-scp -i "$key" -r "$localPath/." "$server`:$remotePath"
+Write-Host "Subiendo nueva version a $remotePublishDir..."
+scp -i "$key" -r "$localPath/." "$server`:$remotePublishDir"
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ERROR subiendo archivos"
@@ -35,18 +30,15 @@ if ($LASTEXITCODE -ne 0) {
     exit
 }
 
-# ---------- PERMISOS ----------
-Write-Host "Asignando permisos..."
-ssh -i "$key" "$server" "sudo chown -R www-data:www-data $remotePath"
+# ---------- EJECUTAR SCRIPT REMOTO ----------
+Write-Host "Ejecutando publicar.sh en el servidor..."
+ssh -i "$key" "$server" "bash $remoteScript"
 
-# ---------- REINICIAR ----------
-Write-Host "Reiniciando servicio..."
-ssh -i "$key" "$server" "sudo systemctl restart $service"
-
-# ---------- STATUS ----------
-Write-Host ""
-Write-Host "Estado servicio:"
-ssh -i "$key" "$server" "sudo systemctl status $service --no-pager"
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR ejecutando publicar.sh"
+    pause
+    exit
+}
 
 Write-Host ""
 Write-Host "DEPLOY TERMINADO"
