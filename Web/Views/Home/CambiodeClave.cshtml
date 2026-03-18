@@ -17,7 +17,7 @@
                     }
                 </div>
             }
-            <form asp-action="CambiodeClave" method="post">
+            <form asp-action="CambiodeClave" method="post" novalidate>
 
                 <div class="row">
 
@@ -38,7 +38,7 @@
                     </div>
 
                 </div>
-                <div id="errorClave" class="text-danger mb-3" style="display:none;"></div>
+
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">
                         Guardar clave
@@ -64,68 +64,69 @@
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        // =========================
-        // 🔥 TOAST
-        // =========================
-        var mensaje = '@TempData["Mensaje"]';
+    var mensaje = '@TempData["Mensaje"]';
 
-        if (mensaje && mensaje !== '') {
-            var toastEl = document.getElementById('toastSuccess');
-            var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-            toast.show();
+    if (mensaje && mensaje !== '') {
+        var toastEl = document.getElementById('toastSuccess');
+        var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        toast.show();
+    }
+
+    const form = document.querySelector("form");
+    const clave = document.getElementById("NuevaClave");
+    const confirmar = document.getElementById("ConfirmarClave");
+
+    function setError(input, message) {
+        input.classList.add("is-invalid");
+        input.nextElementSibling.innerText = message;
+    }
+
+    function clearError(input) {
+        input.classList.remove("is-invalid");
+    }
+
+    function validar() {
+
+        let valido = true;
+
+        clearError(clave);
+        clearError(confirmar);
+
+        // ❌ vacío clave
+        if (!clave.value) {
+            setError(clave, "Debes ingresar una clave.");
+            valido = false;
         }
 
-        // =========================
-        // 🔐 VALIDACIÓN
-        // =========================
-        const form = document.querySelector("form");
-        const clave = document.getElementById("NuevaClave");
-        const confirmar = document.getElementById("ConfirmarClave");
-
-        function validar() {
-
-            let valido = true;
-
-            // reset
-            clave.classList.remove("is-invalid");
-            confirmar.classList.remove("is-invalid");
-
-            // ❌ vacío
-            if (!clave.value) {
-                clave.classList.add("is-invalid");
-                valido = false;
-            }
-
-            if (!confirmar.value) {
-                confirmar.classList.add("is-invalid");
-                valido = false;
-            }
-
-            // ❌ no coinciden
-            if (clave.value && confirmar.value && clave.value !== confirmar.value) {
-                confirmar.classList.add("is-invalid");
-                valido = false;
-            }
-
-            return valido;
+        // ❌ vacío confirmar
+        if (!confirmar.value) {
+            setError(confirmar, "Debes confirmar la clave.");
+            valido = false;
         }
 
-        // 🔥 TIEMPO REAL
-        clave.addEventListener("input", validar);
-        confirmar.addEventListener("input", validar);
+        // ❌ no coinciden
+        if (clave.value && confirmar.value && clave.value !== confirmar.value) {
+            setError(confirmar, "Las contraseñas no coinciden.");
+            valido = false;
+        }
 
-        // 🔥 BLOQUEO REAL
-        form.addEventListener("submit", function (e) {
+        return valido;
+    }
 
-            if (!validar()) {
-                e.preventDefault();
-                e.stopPropagation(); // 🔥 clave para bloquear completamente
-                return false;
-            }
+    clave.addEventListener("input", validar);
+    confirmar.addEventListener("input", validar);
 
-        });
+    form.addEventListener("submit", function (e) {
+
+        if (!validar()) {
+            e.preventDefault();
+            e.stopImmediatePropagation(); // 🔥 MÁS FUERTE que stopPropagation
+            return false;
+        }
 
     });
+
+});
 </script>

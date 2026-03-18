@@ -28,7 +28,7 @@ namespace Web.Models
         public Guid CiudadId { get; set; } 
 
         [Required(ErrorMessage = "Selecciona un género")]
-        public string Genero { get; set; } = string.Empty;
+        public Guid GeneroId { get; set; }
 
         [StringLength(500)]
         public string? Intereses { get; set; }
@@ -37,6 +37,7 @@ namespace Web.Models
         public string? MensajeOk { get; set; }
 
         public List<CiudadDto> Ciudades { get; set; } = new List<CiudadDto>();
+        public List<GeneroDto> Generos { get; set; } = new List<GeneroDto>();
 
         // Validación automática +18
         public bool EsMayorDeEdad()

@@ -10,16 +10,26 @@ namespace Web.Controllers
         private readonly LoginRepository _loginRepo;
         private readonly MenuRepository _menuRepo;
         private readonly RegisterRepository _registerRepo;
+        private readonly CiudadesRepository _ciudadesRepo;
+        private readonly GenerosRepository _generosRepo;
         public AuthenticationController(
             LoginRepository loginRepo,
             MenuRepository menuRepo,
-            RegisterRepository registerRepo)
+            RegisterRepository registerRepo,
+            CiudadesRepository ciudadesRepo,
+            GenerosRepository generosRepo)
         {
             _loginRepo = loginRepo;
             _menuRepo = menuRepo;
             _registerRepo = registerRepo;
+            _ciudadesRepo = ciudadesRepo;
+            _generosRepo = generosRepo;
         }
-
+        private void CargarCombos(RegisterViewModel model)
+        {
+            model.Ciudades = _ciudadesRepo.ListarCiudades();
+            model.Generos = _generosRepo.ListarGeneros();
+        }
         /* =====================================================
            LOGIN
         ===================================================== */
@@ -96,7 +106,7 @@ namespace Web.Controllers
         {
             var model = new RegisterViewModel();
 
-            model.Ciudades = _registerRepo.ListarCiudades();
+            CargarCombos(model); // 🔥 ESTA ES LA CLAVE
 
             return View(model);
         }
@@ -105,52 +115,58 @@ namespace Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(RegisterViewModel model)
         {
-            // Validar modelo
-            if (!ModelState.IsValid)
-            {
-                model.Ciudades = _registerRepo.ListarCiudades();
-                return View(model);
-            }
+            // 🔁 Siempre recargar combos
+            CargarCombos(model);
 
-            // 🔞 Validar mayor de 18 años
+            // ❌ Validaciones automáticas (DataAnnotations)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            // 🔞 Edad
             if (!model.EsMayorDeEdad())
             {
                 model.MensajeError = "Debes ser mayor de 18 años para registrarte.";
-                model.Ciudades = _registerRepo.ListarCiudades();
                 return View(model);
             }
 
-            // ✅ Validar que se haya seleccionado una ciudad
+            // ❌ Ciudad
             if (model.CiudadId == Guid.Empty)
             {
                 model.MensajeError = "Debes seleccionar una ciudad.";
-                model.Ciudades = _registerRepo.ListarCiudades();
                 return View(model);
             }
 
-            // Registrar usuario
+            // ❌ Género
+            if (model.GeneroId == Guid.Empty)
+            {
+                model.MensajeError = "Debes seleccionar un género.";
+                return View(model);
+            }
+
+            // 🚀 REGISTRO (AHORA CON GENEROID)
             var result = _registerRepo.RegistrarUsuario(
                 model.Usuario,
                 model.Clave,
                 model.Nombre,
                 model.Email,
                 model.FechaNacimiento,
-                model.CiudadId,   // Nunca null ahora
-                model.Genero,
+                model.CiudadId,
+                model.GeneroId,   // 🔥 AQUÍ ESTÁ EL CAMBIO CLAVE
                 model.Intereses ?? ""
             );
 
             if (result == null || result.Codigo != "USER_CREATED_PENDING_CONFIRMATION")
             {
                 model.MensajeError = result?.Descripcion ?? "No fue posible registrar el usuario.";
-                model.Ciudades = _registerRepo.ListarCiudades();
                 return View(model);
             }
 
+            // 🧹 limpiar modelo
             ModelState.Clear();
 
             var nuevoModelo = new RegisterViewModel();
-            nuevoModelo.Ciudades = _registerRepo.ListarCiudades();
+            CargarCombos(nuevoModelo);
+
             nuevoModelo.MensajeOk = "Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.";
 
             return View(nuevoModelo);

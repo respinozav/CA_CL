@@ -87,11 +87,8 @@ namespace Web.Controllers
         [MenuAuthorize]
         public IActionResult CambiodeClave(CambioClaveViewModel model)
         {
-            // ❌ VALIDACIONES BACKEND
-            if (string.IsNullOrWhiteSpace(model.NuevaClave) ||
-                string.IsNullOrWhiteSpace(model.ConfirmarClave))
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Todos los campos son obligatorios.");
                 return View(model);
             }
 
@@ -111,7 +108,7 @@ namespace Web.Controllers
 
             var resultado = _usuarioRepository.ActualizarClave(usuarioId, model.NuevaClave);
 
-            TempData["Mensaje"] = "Clave actualizada correctamente";
+            TempData["Mensaje"] = resultado.Descripcion;
 
             return RedirectToAction("CambiodeClave");
         }

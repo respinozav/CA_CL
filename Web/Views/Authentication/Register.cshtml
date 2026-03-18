@@ -94,14 +94,16 @@
 
                                             <div class="mb-3">
                                                 <label class="fw-semibold">Género</label>
-                                                <select asp-for="Genero" class="form-select">
+                                                <select asp-for="GeneroId" class="form-select">
                                                     <option value="">Selecciona una opción</option>
-                                                    <option value="Masculino">Masculino</option>
-                                                    <option value="Femenino">Femenino</option>
-                                                    <option value="Otro">Otro</option>
-                                                    <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                                                    @foreach (var g in Model.Generos)
+                                                    {
+                                                        <option value="@g.GeneroId">
+                                                            @g.NombreGenero
+                                                        </option>
+                                                    }
                                                 </select>
-                                                <span asp-validation-for="Genero" class="text-danger"></span>
+                                                <span asp-validation-for="GeneroId" class="text-danger"></span>
                                             </div>
 
                                             <div class="mb-3">
