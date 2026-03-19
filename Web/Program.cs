@@ -49,7 +49,7 @@ app.UseRouting();
 
 // 🔐 SESSION ANTES DE AUTH
 app.UseSession();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 // 👉 Ruta inicial al LOGIN
