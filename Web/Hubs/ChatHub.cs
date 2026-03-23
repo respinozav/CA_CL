@@ -1,42 +1,47 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Web.Data;
+using Web.Models;
 
 namespace Web.Hubs
 {
     public class ChatHub : Hub
     {
-        private static Dictionary<string, string> usuariosOnline = new();
-
-        public async Task RegistrarUsuario(string usuario)
+        private static Dictionary<string, UsuarioDTO> usuariosOnline = new();
+        private static Dictionary<string, string> conexiones = new();
+        // key: userId, value: connectionId
+        private readonly ChatRepository _chatRepo;
+        public ChatHub(ChatRepository chatRepo)
         {
-            usuariosOnline[Context.ConnectionId] = usuario;
+            _chatRepo = chatRepo;
+        }
+        public async Task EnviarMensaje(string usuario, string mensaje)
+        {
+            var usuarioId = Guid.Parse(
+                Context.GetHttpContext().Session.GetString("UsuarioId")
+            );
+
+            // 🔥 GUARDAR EN BD
+            _chatRepo.GuardarMensajeGrupal(usuarioId, mensaje);
+
+            await Clients.All.SendAsync("RecibirMensaje", usuario, mensaje);
+        }
+        public async Task RegistrarUsuario(string nombre)
+        {
+            var userId = Context.GetHttpContext().Session.GetString("UsuarioId");
+
+            if (string.IsNullOrEmpty(userId))
+                return;
+
+            usuariosOnline[Context.ConnectionId] = new UsuarioDTO
+            {
+                UsuarioId = userId,
+                Nombre = nombre
+            };
 
             await Clients.All.SendAsync("UsuariosConectados", usuariosOnline.Values);
         }
 
-        public async Task EnviarMensaje(string usuario, string mensaje)
-        {
-            await Clients.All.SendAsync("RecibirMensaje", usuario, mensaje);
-        }
-        public async Task EnviarMensajePrivado(string deUsuario, string paraUsuario, string mensaje)
-        {
-            var destinoConnectionId = usuariosOnline
-                .FirstOrDefault(x => x.Value == paraUsuario).Key;
 
-            var origenConnectionId = usuariosOnline
-                .FirstOrDefault(x => x.Value == deUsuario).Key;
-
-            if (destinoConnectionId != null)
-            {
-                await Clients.Client(destinoConnectionId)
-                    .SendAsync("RecibirMensajePrivado", deUsuario, paraUsuario, mensaje);
-            }
-
-            if (origenConnectionId != null)
-            {
-                await Clients.Client(origenConnectionId)
-                    .SendAsync("RecibirMensajePrivado", deUsuario, paraUsuario, mensaje);
-            }
-        }
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             if (usuariosOnline.ContainsKey(Context.ConnectionId))
@@ -48,9 +53,37 @@ namespace Web.Hubs
 
             await base.OnDisconnectedAsync(exception);
         }
+
         public async Task UsuarioEscribiendo(string usuario)
         {
             await Clients.Others.SendAsync("MostrarEscribiendo", usuario);
+        }
+        public async Task EnviarMensajePrivado(Guid deId, Guid paraId, string mensaje)
+        {
+            await _chatRepo.GuardarMensaje(deId, paraId, mensaje);
+
+            var paraIdStr = paraId.ToString();
+
+            if (conexiones.TryGetValue(paraIdStr, out var connectionIdDestino))
+            {
+                await Clients.Client(connectionIdDestino)
+                    .SendAsync("RecibirMensajePrivado", deId, paraId, mensaje);
+            }
+
+            // enviar también al que envía
+            await Clients.Caller
+                .SendAsync("RecibirMensajePrivado", deId, paraId, mensaje);
+        }
+        public override async Task OnConnectedAsync()
+        {
+            var userId = Context.GetHttpContext().Session.GetString("UsuarioId");
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                conexiones[userId] = Context.ConnectionId;
+            }
+
+            await base.OnConnectedAsync();
         }
     }
 }

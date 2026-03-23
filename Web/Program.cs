@@ -8,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 //SignalR
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
 
 builder.Services.AddHttpContextAccessor();
 // DbContext
@@ -25,6 +28,7 @@ builder.Services.AddScoped<RegisterRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<CiudadesRepository>();
 builder.Services.AddScoped<GenerosRepository>();
+builder.Services.AddScoped<ChatRepository>();
 // 🧠 SESSION (LA USAMOS EN LOGIN)
 builder.Services.AddSession(options =>
 {

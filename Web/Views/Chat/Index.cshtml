@@ -8,6 +8,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var usuario = HttpContextAccessor.HttpContext.Session.GetString("Nombre") ?? "Usuario";
+    var usuarioId = HttpContextAccessor.HttpContext.Session.GetString("UsuarioId");
 }
 @section styles {
 
@@ -149,6 +150,7 @@
     </style>
 
 }
+<input type="hidden" id="usuarioId" value="@usuarioId" />
 <div class="d-lg-flex">
 
     <!-- SIDEBAR -->
@@ -284,13 +286,16 @@
             .build();
 
         const usuario = document.getElementById("usuarioActual").value;
+        const usuarioId = document.getElementById("usuarioId").value;
 
         let usuarioPrivado = null;
         let ventanasChat = {};
         const MAX_CHATS = 4;
         let ordenChats = [];
         let usuariosOnline = [];
-
+        let cargando = false;
+        let fechaMasAntigua = null;
+        let mapaUsuarios = {}; // userId -> nombre
         // =============================
         // RECIBIR MENSAJE GENERAL
         // =============================
@@ -304,8 +309,7 @@
             });
 
             const li = document.createElement("li");
-            li.setAttribute("data-user", user);
-
+             li.setAttribute("data-user", user);
             li.innerHTML = `
                 <div class="conversation-list d-flex">
 
@@ -339,172 +343,120 @@
         // =============================
         // RECIBIR MENSAJE PRIVADO
         // =============================
-        connection.on("RecibirMensajePrivado", function (de, para, mensaje) {
+                connection.on("RecibirMensajePrivado", function (deId, paraId, mensaje) {
 
-            const otro = de === usuario ? para : de;
+                const otro = deId === usuarioId ? paraId : deId;
 
-            abrirVentanaChat(otro);
+                const nombre = mapaUsuarios[otro] || "Usuario";
 
-            const lista = document.getElementById("mensajes-" + otro);
+                abrirVentanaChat(otro, nombre);
 
-            if (!lista) return;
+                const lista = document.getElementById("mensajes-" + otro);
 
-            const hora = new Date().toLocaleTimeString([], {
+                if (!lista) return;
+
+                const hora = new Date().toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit'
-            });
+                });
 
-            const div = document.createElement("div");
+                const div = document.createElement("div");
 
-            let esMio = de === usuario;
+                let esMio = deId === usuarioId;
 
-            if (esMio) {
-
-                div.className = "chat-row enviado";
+                div.className = esMio ? "chat-row enviado" : "chat-row";
 
                 div.innerHTML = `
-                    <div class="chat-bubble mensaje-enviado">
-                        ${mensaje}
-                        <span class="mensaje-hora">${hora}</span>
-                    </div>
+                <div class="chat-bubble ${esMio ? 'mensaje-enviado' : 'mensaje-recibido'}">
+                ${mensaje}
+                <span class="mensaje-hora">${hora}</span>
+                </div>
                 `;
 
-            } else {
-
-                div.className = "chat-row";
-
-                div.innerHTML = `
-                    <div class="chat-bubble mensaje-recibido">
-                        ${mensaje}
-                        <span class="mensaje-hora">${hora}</span>
-                    </div>
-                `;
-
-                if (!ventanasChat[otro].abierta) {
-                    agregarNotificacion(otro, mensaje);
-                }
-
-            }
-
-            lista.appendChild(div);
-            lista.scrollTop = lista.scrollHeight;
-
-        });
+                lista.appendChild(div);
+                lista.scrollTop = lista.scrollHeight;
+                });
 
 
         // =============================
         // USUARIOS CONECTADOS
         // =============================
-        connection.on("UsuariosConectados", function (usuarios) {
+                connection.on("UsuariosConectados", function (usuarios) {
 
-            usuariosOnline = usuarios;
+                usuariosOnline = usuarios;
 
-            const lista = document.getElementById("listaUsuarios");
+                const lista = document.getElementById("listaUsuarios");
+                lista.innerHTML = "";
 
-            lista.innerHTML = "";
+                mapaUsuarios = {}; // 🔥 reset
 
-            usuarios.forEach(function (user) {
+                usuarios.forEach(function (user) {
 
-                if (user === usuario)
-                    return;
+                if (!user || !user.usuarioId) return;
+
+                // 🔥 guardar en diccionario
+                mapaUsuarios[user.usuarioId] = user.nombre;
+
+                if (user.usuarioId === usuarioId) return;
 
                 const li = document.createElement("li");
 
                 li.innerHTML = `
-                <a href="#" onclick="abrirVentanaChat('${user}')">
-                    <div class="d-flex align-items-start">
-
-                        <div class="flex-shrink-0 me-3">
-                            <img src="/assets/images/users/avatar-2.jpg"
-                                 class="rounded-circle avatar-xs">
-                        </div>
-
-                        <div class="flex-grow-1 overflow-hidden">
-                            <h5 class="text-truncate font-size-14 mb-1">
-                                ${user}
-                            </h5>
-
-                            <p class="text-success font-size-12 mb-0">
-                                Online
-                            </p>
-                        </div>
-
-                    </div>
+                <a href="#" onclick="abrirVentanaChat('${user.usuarioId}', '${user.nombre}')">
+                <div>${user.nombre}</div>
                 </a>
                 `;
 
                 lista.appendChild(li);
-
-            });
-
-            actualizarEstadoChats();
-
-        });
+                });
+                });
 
 
         // =============================
         // ABRIR VENTANA CHAT
         // =============================
-        function abrirVentanaChat(user) {
+                function abrirVentanaChat(userId, nombre) {
 
-            if (!ventanasChat[user]) {
-
-                if (ordenChats.length >= MAX_CHATS) {
-
-                    const cerrar = ordenChats.shift();
-
-                    cerrarChat(cerrar);
-
-                }
+                if (!ventanasChat[userId]) {
 
                 const container = document.getElementById("chatWindowsContainer");
 
                 const ventana = document.createElement("div");
 
                 ventana.className = "chat-window";
-                ventana.dataset.user = user;
+                ventana.dataset.user = userId;
 
                 ventana.innerHTML = `
-                <div class="chat-header" data-user="${user}">
+                <div class="chat-header" data-user="${userId}">
 
-                    <span class="estado"></span>
+                <span class="estado"></span>
 
-                    <span class="nombre" onclick="toggleChat('${user}')">
-                        ${user}
-                    </span>
+                <span class="nombre">
+                ${nombre}
+                </span>
 
-                    <div class="chat-controls">
-                        <span onclick="minimizarChat('${user}')">—</span>
-                        <span onclick="cerrarChat('${user}')">✖</span>
-                    </div>
+                <div class="chat-controls">
+                <span onclick="minimizarChat('${userId}')">—</span>
+                <span onclick="cerrarChat('${userId}')">✖</span>
+                </div>
 
                 </div>
 
-                <div class="chat-body" id="mensajes-${user}"></div>
+                <div class="chat-body" id="mensajes-${userId}"></div>
 
                 <div class="chat-input">
-                    <input type="text"
-                        id="input-${user}"
-                        placeholder="Escribe..."
-                        onkeypress="enterEnviar(event,'${user}')">
+                <input type="text"
+                id="input-${userId}"
+                placeholder="Escribe..."
+                onkeypress="enterEnviar(event,'${userId}')">
                 </div>
                 `;
 
                 container.appendChild(ventana);
 
-                ventanasChat[user] = {
-                    abierta: true
-                };
-
-                ordenChats.push(user);
-                actualizarEstadoUsuario(user);
-            } else {
-
-                ventanasChat[user].abierta = true;
-
-            }
-
-        }
+                ventanasChat[userId] = { abierta: true };
+                }
+                }
 
 
         // =============================
@@ -528,28 +480,26 @@
         // =============================
         // ENTER ENVIAR
         // =============================
-        function enterEnviar(e,user){
+                function enterEnviar(e, paraId){
 
-            if(e.key === "Enter"){
+                if(e.key === "Enter"){
 
-                if(!usuariosOnline.includes(user)){
-                    alert("El usuario está fuera de línea");
-                return;
-        }
-                const input = document.getElementById("input-"+user);
+                const input = document.getElementById("input-"+paraId);
 
                 const mensaje = input.value;
 
-                if(mensaje.trim()==="")
-                    return;
+                if(mensaje.trim()==="") return;
 
-                connection.invoke("EnviarMensajePrivado", usuario, user, mensaje);
+                connection.invoke(
+                "EnviarMensajePrivado",
+                usuarioId,   // GUID REAL
+                paraId,      // GUID DESTINO
+                mensaje
+                );
 
                 input.value="";
-
-            }
-
-        }
+                }
+                }
 
 
         // =============================
@@ -586,7 +536,13 @@
         connection.start().then(function () {
 
             connection.invoke("RegistrarUsuario", usuario);
+                // 🔥 CARGAR HISTORIAL
+                cargarHistorial(true);
 
+                setTimeout(() => {
+                const lista = document.getElementById("listaMensajes");
+                lista.scrollTop = lista.scrollHeight;
+                }, 300);
         }).catch(function (err) {
 
             console.error(err.toString());
@@ -675,20 +631,84 @@
                 }
             });
         }
-        function filtrarUsuarios(){
-            const texto = document
-                .getElementById("buscarUsuario")
-                .value
-                .toLowerCase();
-            const usuarios = document.querySelectorAll("#listaUsuarios li");
-            usuarios.forEach(function(li){
-                const nombre = li.getAttribute("data-user").toLowerCase();
-                if(nombre.includes(texto)){
-                    li.style.display = "";
-                }else{
-                    li.style.display = "none";
+        function cargarHistorial(inicial = false) {
+
+                if (cargando) return;
+
+                cargando = true;
+
+                let url = '/Chat/ObtenerHistorial?top=50';
+
+                if (!inicial && fechaMasAntigua) {
+                url += '&fechaAnterior=' + encodeURIComponent(fechaMasAntigua);
                 }
-            });
+
+                fetch(url)
+                .then(res => res.json())
+                .then(data => {
+
+                if (data.length === 0) return;
+
+                const lista = document.getElementById("listaMensajes");
+
+                // 🔥 guardar scroll actual
+                const scrollHeightAntes = lista.scrollHeight;
+
+                data.sort((a, b) => new Date(a.fechaEnvio) - new Date(b.fechaEnvio));
+
+                data.forEach(msg => {
+
+                const hora = new Date(msg.fechaEnvio).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+                });
+
+                const li = document.createElement("li");
+
+                li.innerHTML = `
+                <div class="conversation-list d-flex">
+                <div class="chat-user-img align-self-start">
+                <img src="/assets/images/users/avatar-2.jpg"
+                class="rounded-circle avatar-xs">
+                </div>
+
+                <div class="ctext-wrap">
+                <div class="ctext-wrap-content">
+                <p class="mb-0">
+                <strong>${msg.nombre}</strong> : ${msg.mensaje}
+                <span class="d-inline-block font-size-12 text-muted ms-3">${hora}</span>
+                </p>
+                </div>
+                </div>
+                </div>
+                `;
+
+                const tituloHoy = lista.querySelector(".chat-day-title");
+
+                if (inicial) {
+                    lista.appendChild(li); // 🔥 siempre abajo en carga inicial
+                } else {
+                    lista.prepend(li); // 🔥 scroll arriba
+                }
+
+                });
+                fechaMasAntigua = data[0].fechaEnvio;
+
+
+                // 🔥 mantener scroll estable
+                lista.scrollTop = lista.scrollHeight - scrollHeightAntes;
+
+                })
+                .finally(() => cargando = false);
         }
+                const contenedor = document.querySelector(".chat-conversation");
+
+                contenedor.addEventListener("scroll", function () {
+
+                if (contenedor.scrollTop <= 5 && !cargando) {
+                cargarHistorial();
+                }
+
+                });
     </script>
 }
