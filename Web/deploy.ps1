@@ -10,7 +10,7 @@ Write-Host ""
 $key = "C:\Proyectos\conociendoamistades.cl\keys\ubuntu-2\LightsailDefaultKey-us-east-1.pem"
 $server = "ubuntu@98.87.29.132"
 $remotePublishDir = "/home/ubuntu/ca_cl_publish"
-$localPath = "C:\Proyectos\conociendoamistades.cl\app\v1\CA_CL\Web\bin\Release\net8.0\publish"
+$localPath = "C:\Proyectos\conociendoamistades.cl\app\v2\CA_CL\Web\bin\Release\net8.0\publish"
 $remoteScript = "/home/ubuntu/sh/publicar.sh"
 
 # ---------- VALIDAR PUBLICACION ----------
