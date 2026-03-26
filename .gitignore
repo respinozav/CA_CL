@@ -492,3 +492,7 @@ appsettings.*.local.json
 bin/
 obj/
 publish/
+
+#evitamos archivos locales de deploy ps1 y cmd
+*.ps1
+*.cmd

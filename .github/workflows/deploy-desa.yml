@@ -1,0 +1,20 @@
+name: Deploy DESA
+
+on:
+  push:
+    branches:
+      - desa
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ejecutar deploy en servidor DESA
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: user_admin
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            /home/user_admin/sh/deploy.sh
