@@ -856,6 +856,6 @@
     </PackageReference>
   </ItemGroup>
 	<Target Name="PostPublish" AfterTargets="Publish">
-	  <Exec Command="powershell -ExecutionPolicy Bypass -File $(ProjectDir)deploy.cmd" />
+	<!--  <Exec Command="powershell -ExecutionPolicy Bypass -File $(ProjectDir)deploy.cmd" /> -->
 	</Target>
 </Project>
