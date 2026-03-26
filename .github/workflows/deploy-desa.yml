@@ -13,8 +13,8 @@ jobs:
       - name: Ejecutar deploy en servidor DESA
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.DESA_SERVER_IP }}
+          username: ${{ secrets.DESA_SERVER_USER }}
+          key: ${{ secrets.DESA_SSH_PRIVATE_KEY }}
           script: |
             /home/user_admin/sh/deploy.sh
