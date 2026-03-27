@@ -1,11 +1,14 @@
 name: Deploy PROD
+
 on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Deploy a PRODUCCION
         uses: appleboy/ssh-action@v1.0.3
@@ -14,4 +17,4 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            /home/ubuntu/sh/deploy.sh
+            /home/${{ secrets.SERVER_USER }}/sh/deploy.sh prod ${{ secrets.SERVER_USER }}
