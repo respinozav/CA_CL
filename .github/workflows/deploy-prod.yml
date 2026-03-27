@@ -17,4 +17,4 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            /home/user_admin/sh/deploy.sh
+            /home/ubuntu/sh/deploy.sh
