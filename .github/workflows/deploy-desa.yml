@@ -1,14 +1,11 @@
 name: Deploy DESA
-
 on:
   push:
     branches:
       - desa
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Ejecutar deploy en servidor DESA
         uses: appleboy/ssh-action@v1.0.3
