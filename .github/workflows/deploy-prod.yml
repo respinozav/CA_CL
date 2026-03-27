@@ -1,14 +1,11 @@
 name: Deploy PROD
-
 on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Deploy a PRODUCCION
         uses: appleboy/ssh-action@v1.0.3
