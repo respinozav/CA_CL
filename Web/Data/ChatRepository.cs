@@ -71,9 +71,9 @@ namespace Web.Data
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public async Task<List<dynamic>> ObtenerInbox(Guid usuarioId)
+        public async Task<List<InboxViewModel>> ObtenerInbox(Guid usuarioId)
         {
-            var lista = new List<dynamic>();
+            var lista = new List<InboxViewModel>();
 
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("web.sp_Chat_ObtenerInbox", conn);
@@ -87,12 +87,15 @@ namespace Web.Data
 
             while (await reader.ReadAsync())
             {
-                lista.Add(new
+                lista.Add(new InboxViewModel
                 {
                     UsuarioId = (Guid)reader["UsuarioId"],
                     Nombre = reader["Nombre"].ToString(),
                     UltimoMensaje = reader["UltimoMensaje"].ToString(),
-                    Fecha = (DateTime)reader["Fecha"]
+                    Fecha = (DateTime)reader["Fecha"],
+                    NoLeidos = reader["NoLeidos"] != DBNull.Value
+                        ? (int)reader["NoLeidos"]
+                        : 0
                 });
             }
 
