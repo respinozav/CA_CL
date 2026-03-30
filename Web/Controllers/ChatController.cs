@@ -20,7 +20,7 @@ namespace Web.Controllers
         {
             return View();
         }
-        public IActionResult Mensajes() // ESTA VISTA VAMOS A OCUPAR PARA EL CHAT PRIVADO
+        public IActionResult Inbox() // ESTA VISTA VAMOS A OCUPAR PARA EL CHAT PRIVADO
         {
             return View();
         }
