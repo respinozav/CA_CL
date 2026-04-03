@@ -58,7 +58,29 @@ namespace Web.Hubs
         {
             await Clients.Others.SendAsync("MostrarEscribiendo", usuario);
         }
-        public async Task EnviarMensajePrivado(Guid deId, Guid paraId, string mensaje)
+        public async Task EnviarMensajePrivadoPorNombres(string deUsuario, string paraUsuario, string mensaje)
+        {
+            var deId = usuariosOnline.FirstOrDefault(x => x.Value.Nombre == deUsuario).Value.UsuarioId;
+            var paraId = usuariosOnline.FirstOrDefault(x => x.Value.Nombre == paraUsuario).Value.UsuarioId;
+
+            Guid.TryParse(deId, out Guid deIdGuid);
+            Guid.TryParse(paraId, out Guid paraIdGuid);
+
+            await _chatRepo.GuardarMensaje(deIdGuid, paraIdGuid, mensaje);
+
+            var paraIdStr = paraIdGuid.ToString();
+
+            if (conexiones.TryGetValue(paraIdStr, out var connectionIdDestino))
+            {
+                await Clients.Client(connectionIdDestino)
+                    .SendAsync("RecibirMensajePrivado", deIdGuid, paraIdGuid, mensaje);
+            }
+
+            // enviar también al que envía
+            await Clients.Caller
+                .SendAsync("RecibirMensajePrivado", deIdGuid, paraIdGuid, mensaje);
+        }
+        public async Task EnviarMensajePrivadoPorIds(Guid deId, Guid paraId, string mensaje)
         {
             await _chatRepo.GuardarMensaje(deId, paraId, mensaje);
 
